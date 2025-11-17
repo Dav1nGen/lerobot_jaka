@@ -32,18 +32,21 @@ def on_press(key):
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
 
-# while True:
-#     a = 0
-#     if pressed_key == '0':
-#         a = 0
-#     if pressed_key == '1':
-#         a = 1
-#     if pressed_key == '2':
-#         a = -1
 
-pos=[-3,0,0,0,0,0]
-print(pos)
-robot.edg_servo_p(end_pos=pos,
+while True:
+    a = 0
+    if pressed_key == '0':
+        a = 0
+    if pressed_key == '1':
+        a = 1
+    if pressed_key == '2':
+        a = -1
+        
+    pos=[a,0,0,0,0,0]
+    print(pos)
+    robot.edg_servo_p(end_pos=pos,
                     move_mode=1,
                     step_num=50,
                     robot_index=0)
+
+
