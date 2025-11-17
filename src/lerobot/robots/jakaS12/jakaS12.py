@@ -6,6 +6,7 @@ from .jaka_lib_2_3_0 import jkrc
 from ..robot import Robot
 from .modbus_tcp import ModbusTCP
 from .config_jakaS12 import JakaS12Config
+from jakaS12 import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
@@ -27,6 +28,7 @@ class JakaS12(Robot):
         self._joint_position: tuple = (0, 0, 0, 0, 0, 0)
         self._cartesian_space_position_diff: dict[str, float] = {}
         self._robot = jkrc.RC(self._arm_ip)
+        self.bus = JakaS12Bus(self._robot)
 
         # Sucker
         self._sucker_ip: str = self._config.sucker_ip
@@ -68,6 +70,10 @@ class JakaS12(Robot):
                                     edg_stat_ip=self._arm_ip,
                                     edg_port=10010,
                                     edg_mode=0)
+        
+        # Set servo move filter
+        self._robot.servo_speed_foresight(200, 0.4)
+        self._robot.servo_move_use_joint_LPF(0.5)
         
         # Enable servo mode
         self._robot.servo_move_enable(1)
