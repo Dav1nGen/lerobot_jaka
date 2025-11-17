@@ -188,7 +188,6 @@ class JakaS12(Robot):
                                                   float] = cart_pos_diff_dict
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
-        # pos_diff=(10,0,0,0,0,0)
 
         logger.debug(f"Sending action to robot: {pos_diff}")
         
@@ -196,6 +195,8 @@ class JakaS12(Robot):
                                 move_mode=1,
                                 step_num=50,
                                 robot_index=0)
+        
+        time.sleep(0.008)
 
         return self._cartesian_space_position_diff
 

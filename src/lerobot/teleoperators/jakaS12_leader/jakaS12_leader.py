@@ -75,26 +75,26 @@ class JakaS12Leader(Teleoperator):
         # Init drag mode parameter
         self._robot.enable_admittance_ctrl(0)
         self._robot.set_torque_sensor_mode(0)
-        self._robot.set_torsenosr_brand(2)  
+        self._robot.set_torsenosr_brand(2)
         self._robot.set_torque_sensor_mode(1)
         logger.info(f"Torque senser open!")
-        self._robot.set_compliant_type(1, 1)  
-        logger.info(f"Inint sensor comple")  
+        self._robot.set_compliant_type(1, 1)
+        logger.info(f"Inint sensor comple")
         logger.info(f"Ready to run")
         self._robot.zero_end_sensor()
         time.sleep(1)
 
         # Set admittance control parameters
-        self._robot.set_admit_ctrl_config(0, 1, 10, 5, 0, 0)  
-        self._robot.set_admit_ctrl_config(1, 1, 10, 5, 0, 0)  
+        self._robot.set_admit_ctrl_config(0, 1, 10, 5, 0, 0)
+        self._robot.set_admit_ctrl_config(1, 1, 10, 5, 0, 0)
         self._robot.set_admit_ctrl_config(2, 1, 10, 5, 0, 0)
-        self._robot.set_admit_ctrl_config(3, 1, 10, 0, 0, 0)  
-        self._robot.set_admit_ctrl_config(4, 1, 10, 0, 0, 0)  
-        self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0) 
+        self._robot.set_admit_ctrl_config(3, 1, 10, 0, 0, 0)
+        self._robot.set_admit_ctrl_config(4, 1, 10, 0, 0, 0)
+        self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0)
 
         # Enable admittance control
         self._robot.enable_admittance_ctrl(1)
-        logger.info(f"Enable_admittance_ctrl open!")  
+        logger.info(f"Enable_admittance_ctrl open!")
 
         # Init parameters
         self._init_parameters()
@@ -102,7 +102,6 @@ class JakaS12Leader(Teleoperator):
         self._is_connected = True
         self._is_running = True
         logger.info(f"Successfully connected to robot at {self._arm_ip}")
-
 
     # Disconnect to robot
     def disconnect(self) -> None:
@@ -181,19 +180,18 @@ class JakaS12Leader(Teleoperator):
     ########Custom method########
     #############################
 
-    # Initialize robot parameters
+    # Initialize robot parameters   
     def _init_parameters(self) -> None:
-        # cart_space_position = self._robot.get_robot_status()
-        self._cart_space_position = self._robot.get_robot_status()[1][18]
-        self._last_cart_space_position = self._robot.get_robot_status()[1][18]
+        self._cart_space_position = self._robot.get_tcp_position()[1]
+        self._last_cart_space_position = self._robot.get_tcp_position()[1]
         logger.info(f"Initialize robot parameters {self._arm_ip} successfully")
 
-    # Update cartesian space position diff in each cycle(0.01s)
+    # Update cartesian space position diff in each cycle
     def _get_cartesian_space_position_diff(self) -> None:
         while self._is_running:
             self._last_cart_space_position = self._cart_space_position
             time.sleep(0.5)
-            self._cart_space_position = self._robot.get_robot_status()[1][18]
+            self._cart_space_position = self._robot.get_tcp_position()[1]
 
             # Calculate cart space diff
             cart_space_position_diff = tuple(
