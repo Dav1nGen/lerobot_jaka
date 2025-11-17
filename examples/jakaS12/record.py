@@ -3,7 +3,7 @@
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
 from lerobot.datasets.utils import hw_to_dataset_features
 from lerobot.processor import make_default_processors
-from lerobot.robots.jakaS12 import Jaka, JakaS12Config
+from lerobot.robots.jakaS12 import JakaS12, JakaS12Config
 from lerobot.scripts.lerobot_record import record_loop
 from lerobot.teleoperators.keyboard import KeyboardSuckerTeleop, KeyboardSuckerTeleopConfig
 from lerobot.teleoperators.jakaS12_leader import JakaS12Leader, JakaS12LeaderConfig
@@ -27,7 +27,7 @@ keyboard_config = KeyboardSuckerTeleopConfig(sucker_ip="192.168.1.8",
                                              sucker_port=502)
 
 # Initialize the robot and teleoperator
-robot = Jaka(robot_config)
+robot = JakaS12(robot_config)
 leader_arm = JakaS12Leader(leader_arm_config)
 keyboard = KeyboardSuckerTeleop(keyboard_config)
 
