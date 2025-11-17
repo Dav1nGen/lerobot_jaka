@@ -21,11 +21,15 @@ import time
 from queue import Queue
 from typing import Any
 
+from pynput import keyboard
+from pynput.keyboard import Key, Listener
+from .modbus_tcp import ModbusTCP
+
 from lerobot.utils.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
 
 from ..teleoperator import Teleoperator
 from ..utils import TeleopEvents
-from .configuration_keyboard import KeyboardEndEffectorTeleopConfig, KeyboardTeleopConfig
+from .configuration_keyboard import KeyboardEndEffectorTeleopConfig, KeyboardTeleopConfig, KeyboardSuckerTeleopConfig
 
 PYNPUT_AVAILABLE = True
 try:
@@ -65,8 +69,10 @@ class KeyboardTeleop(Teleoperator):
     def action_features(self) -> dict:
         return {
             "dtype": "float32",
-            "shape": (len(self.arm),),
-            "names": {"motors": list(self.arm.motors)},
+            "shape": (len(self.arm), ),
+            "names": {
+                "motors": list(self.arm.motors)
+            },
         }
 
     @property
@@ -75,7 +81,8 @@ class KeyboardTeleop(Teleoperator):
 
     @property
     def is_connected(self) -> bool:
-        return PYNPUT_AVAILABLE and isinstance(self.listener, keyboard.Listener) and self.listener.is_alive()
+        return PYNPUT_AVAILABLE and isinstance(
+            self.listener, keyboard.Listener) and self.listener.is_alive()
 
     @property
     def is_calibrated(self) -> bool:
@@ -88,14 +95,16 @@ class KeyboardTeleop(Teleoperator):
             )
 
         if PYNPUT_AVAILABLE:
-            logging.info("pynput is available - enabling local keyboard listener.")
+            logging.info(
+                "pynput is available - enabling local keyboard listener.")
             self.listener = keyboard.Listener(
                 on_press=self._on_press,
                 on_release=self._on_release,
             )
             self.listener.start()
         else:
-            logging.info("pynput not available - skipping local keyboard listener.")
+            logging.info(
+                "pynput not available - skipping local keyboard listener.")
             self.listener = None
 
     def calibrate(self) -> None:
@@ -167,14 +176,23 @@ class KeyboardEndEffectorTeleop(KeyboardTeleop):
         if self.config.use_gripper:
             return {
                 "dtype": "float32",
-                "shape": (4,),
-                "names": {"delta_x": 0, "delta_y": 1, "delta_z": 2, "gripper": 3},
+                "shape": (4, ),
+                "names": {
+                    "delta_x": 0,
+                    "delta_y": 1,
+                    "delta_z": 2,
+                    "gripper": 3
+                },
             }
         else:
             return {
                 "dtype": "float32",
-                "shape": (3,),
-                "names": {"delta_x": 0, "delta_y": 1, "delta_z": 2},
+                "shape": (3, ),
+                "names": {
+                    "delta_x": 0,
+                    "delta_y": 1,
+                    "delta_z": 2
+                },
             }
 
     def get_action(self) -> dict[str, Any]:
@@ -264,7 +282,8 @@ class KeyboardEndEffectorTeleop(KeyboardTeleop):
             keyboard.Key.ctrl_r,
             keyboard.Key.ctrl_l,
         ]
-        is_intervention = any(self.current_pressed.get(key, False) for key in movement_keys)
+        is_intervention = any(
+            self.current_pressed.get(key, False) for key in movement_keys)
 
         # Check for episode control commands from misc_keys_queue
         terminate_episode = False
@@ -289,3 +308,130 @@ class KeyboardEndEffectorTeleop(KeyboardTeleop):
             TeleopEvents.SUCCESS: success,
             TeleopEvents.RERECORD_EPISODE: rerecord_episode,
         }
+
+
+class KeyboardSuckerTeleop(KeyboardTeleop):
+    config_class = KeyboardSuckerTeleopConfig
+    name = "T002_keyboard"
+
+    def __init__(self, config: KeyboardSuckerTeleopConfig):
+        super().__init__(config)
+        self.__config = config
+        self.__robot_type = config.type
+
+        # Sucker
+        self.__sucker_state: bool = False
+        self.__sucker_is_connected: bool = False
+        self.__sucker_ip: str = self.__config.sucker_ip
+        self.__sucker_port: int = self.__config.sucker_port
+        self.__coils_address: int = self.__config.coils_address
+        self.__sucker: ModbusTCP = ModbusTCP(ip=self.__sucker_ip,
+                                             port=self.__sucker_port)
+
+    def connect(self) -> None:
+        super().connect()
+        self.__sucker.connect()
+        self.__sucker_is_connected = True
+
+    def disconnect(self) -> None:
+        if self.is_connected:
+            self.__close_sucker()
+            self.__sucker.disconnect()
+            super().disconnect()
+            self.__sucker_is_connected = False
+
+    @property
+    def action_features(self) -> dict:
+        return {"dtype": "bool", "shape": (1, ), "names": {"sucker_state": 0}}
+
+    def get_action(self) -> dict[str, bool]:
+        if not self.is_connected:
+            raise DeviceNotConnectedError(
+                "KeyboardSuckerTeleop is not connected. You need to run `connect()` before `get_action()`."
+            )
+
+        # Process all pending key events from the base class queue
+        while not self.event_queue.empty():
+            key_char, is_pressed = self.event_queue.get_nowait()
+            if is_pressed:
+                if key_char == 'o' or key_char == 'O':
+                    self.__open_sucker()
+                elif key_char == 'c' or key_char == 'C':
+                    self.__close_sucker()
+                elif key_char == 's' or key_char == 'S':
+                    self.current_pressed['s'] = True
+
+        return {"sucker_state": self.__sucker_state}
+
+    def __open_sucker(self) -> None:
+        self.__sucker.write(self.__coils_address, True)
+        self.__sucker_state = True
+
+    def __close_sucker(self) -> None:
+        self.__sucker.write(self.__coils_address, False)
+        self.__sucker_state = False
+
+    def get_teleop_events(self) -> dict[str, Any]:
+
+        if not self.is_connected:
+            return {
+                TeleopEvents.IS_INTERVENTION: False,
+                TeleopEvents.TERMINATE_EPISODE: False,
+                TeleopEvents.SUCCESS: False,
+                TeleopEvents.RERECORD_EPISODE: False,
+            }
+
+        self._drain_pressed_keys()
+
+        # 检查是否有干预（'o' 或 'c' 键被按下）
+        is_intervention = False
+        if ('o' in self.current_pressed and self.current_pressed['o']) or \
+           ('O' in self.current_pressed and self.current_pressed['O']) or \
+           ('c' in self.current_pressed and self.current_pressed['c']) or \
+           ('C' in self.current_pressed and self.current_pressed['C']):
+            is_intervention = True
+
+        terminate_episode = False
+        success = False
+        rerecord_episode = False
+        
+        if 's' in self.current_pressed and self.current_pressed['s']:
+            success = True
+            terminate_episode = True
+            self.current_pressed['s'] = False
+        elif 'r' in self.current_pressed and self.current_pressed['r']:
+            terminate_episode = True
+            rerecord_episode = True
+            self.current_pressed['r'] = False
+        elif 'q' in self.current_pressed and self.current_pressed['q']:
+            terminate_episode = True
+            success = False
+            self.current_pressed['q'] = False
+
+        return {
+            TeleopEvents.IS_INTERVENTION: is_intervention,
+            TeleopEvents.TERMINATE_EPISODE: terminate_episode,
+            TeleopEvents.SUCCESS: success,
+            TeleopEvents.RERECORD_EPISODE: rerecord_episode,
+        }
+
+    @property
+    def is_connected(self) -> bool:
+        return super().is_connected and self.__sucker_is_connected
+
+    def send_feedback(self, feedback: dict[str, Any]) -> None:
+        pass
+
+    @property
+    def feedback_features(self) -> dict:
+        return {}
+
+    @property
+    def is_calibrated(self) -> bool:
+        return True
+
+    def calibrate(self) -> None:
+        pass
+
+    def configure(self):
+        pass

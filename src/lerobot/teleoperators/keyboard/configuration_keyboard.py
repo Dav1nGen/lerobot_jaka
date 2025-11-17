@@ -31,3 +31,15 @@ class KeyboardTeleopConfig(TeleoperatorConfig):
 @dataclass
 class KeyboardEndEffectorTeleopConfig(KeyboardTeleopConfig):
     use_gripper: bool = True
+
+@TeleoperatorConfig.register_subclass("keyboard_sucker")
+@dataclass
+class KeyboardSuckerTeleopConfig(KeyboardTeleopConfig):
+    # Sucker parameter
+    sucker_ip: str = "192.168.1.8"
+    sucker_port: int = 502
+    coils_address: int = 8
+    
+    use_sucker: bool = True
+    
+    

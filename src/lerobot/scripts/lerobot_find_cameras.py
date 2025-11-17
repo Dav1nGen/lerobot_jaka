@@ -36,6 +36,7 @@ from typing import Any
 
 import numpy as np
 from PIL import Image
+import pyrealsense2 as rs
 
 from lerobot.cameras.configs import ColorMode
 from lerobot.cameras.opencv.camera_opencv import OpenCVCamera

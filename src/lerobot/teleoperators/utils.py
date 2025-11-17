@@ -85,6 +85,11 @@ def make_teleoperator_from_config(config: TeleoperatorConfig) -> Teleoperator:
         from .reachy2_teleoperator import Reachy2Teleoperator
 
         return Reachy2Teleoperator(config)
+    elif config.type == "jakaS12_leader":
+        from .jakaS12_leader import JakaS12Leader
+
+        return JakaS12Leader(config)
+        
     else:
         try:
             return cast(Teleoperator, make_device_from_device_class(config))

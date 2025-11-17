@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .configuration_keyboard import KeyboardEndEffectorTeleopConfig, KeyboardTeleopConfig
-from .teleop_keyboard import KeyboardEndEffectorTeleop, KeyboardTeleop
+from .configuration_keyboard import KeyboardEndEffectorTeleopConfig, KeyboardTeleopConfig, KeyboardSuckerTeleopConfig
+from .teleop_keyboard import KeyboardEndEffectorTeleop, KeyboardTeleop, KeyboardSuckerTeleop
+from ..keyboard.modbus_tcp import ModbusTCP
 
 __all__ = [
-    "KeyboardTeleopConfig",
-    "KeyboardTeleop",
-    "KeyboardEndEffectorTeleopConfig",
-    "KeyboardEndEffectorTeleop",
+    "KeyboardTeleopConfig", "KeyboardTeleop",
+    "KeyboardEndEffectorTeleopConfig", "KeyboardEndEffectorTeleop",
+    "KeyboardSuckerTeleopConfig", "KeyboardSuckerTeleop"
 ]
