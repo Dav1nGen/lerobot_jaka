@@ -14,7 +14,7 @@
 
 import abc
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, List
 
 import draccus
 
@@ -204,7 +204,7 @@ class GripperConfig:
 class ResetConfig:
     """Configuration for environment reset behavior."""
 
-    fixed_reset_joint_positions: Any | None = None
+    fixed_reset_joint_positions: list[float] | None = None
     reset_time_s: float = 5.0
     control_time_s: float = 20.0
     terminate_on_success: bool = True

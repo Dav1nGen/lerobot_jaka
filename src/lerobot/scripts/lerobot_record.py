@@ -107,11 +107,13 @@ from lerobot.teleoperators import (  # noqa: F401
     bi_so100_leader,
     homunculus,
     koch_leader,
-    make_teleoperator_from_config,
-    omx_leader,
     so100_leader,
     so101_leader,
+    jakaS12_leader,
+    make_teleoperator_from_config,
+    omx_leader,
 )
+from lerobot.teleoperators.utils import make_teleoperator_from_config
 from lerobot.teleoperators.keyboard.teleop_keyboard import KeyboardTeleop
 from lerobot.utils.constants import ACTION, OBS_STR
 from lerobot.utils.control_utils import (
@@ -272,21 +274,22 @@ def record_loop(
                 for t in teleop
                 if isinstance(
                     t,
-                    (
+                 (
                         so100_leader.SO100Leader
                         | so101_leader.SO101Leader
                         | koch_leader.KochLeader
                         | omx_leader.OmxLeader
+                        | jakaS12_leader.JakaS12Leader
                     ),
                 )
             ),
             None,
         )
 
-        if not (teleop_arm and teleop_keyboard and len(teleop) == 2 and robot.name == "lekiwi_client"):
-            raise ValueError(
-                "For multi-teleop, the list must contain exactly one KeyboardTeleop and one arm teleoperator. Currently only supported for LeKiwi robot."
-            )
+        # if not (teleop_arm and teleop_keyboard and len(teleop) == 2 and robot.name == "lekiwi_client"):
+        #     raise ValueError(
+        #         "For multi-teleop, the list must contain exactly one KeyboardTeleop and one arm teleoperator. Currently only supported for LeKiwi robot."
+        #     )
 
     # Reset policy and processor if they are provided
     if policy is not None and preprocessor is not None and postprocessor is not None:

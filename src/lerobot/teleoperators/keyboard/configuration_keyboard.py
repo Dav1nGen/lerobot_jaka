@@ -66,3 +66,15 @@ class KeyboardRoverTeleopConfig(TeleoperatorConfig):
     angular_speed_ratio: float = 0.6
     min_linear_speed: float = 0.1
     min_angular_speed: float = 0.05
+    
+@TeleoperatorConfig.register_subclass("keyboard_sucker")
+@dataclass
+class KeyboardSuckerTeleopConfig(KeyboardTeleopConfig):
+    # Sucker parameter
+    sucker_ip: str = "192.168.1.8"
+    sucker_port: int = 502
+    coils_address: int = 8
+    
+    use_sucker: bool = True
+    
+    

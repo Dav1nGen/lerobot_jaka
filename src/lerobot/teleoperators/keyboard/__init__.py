@@ -20,6 +20,7 @@ from .configuration_keyboard import (
     KeyboardTeleopConfig,
 )
 from .teleop_keyboard import KeyboardEndEffectorTeleop, KeyboardRoverTeleop, KeyboardTeleop
+from ..keyboard.modbus_tcp import ModbusTCP
 
 __all__ = [
     "KeyboardTeleopConfig",
@@ -28,4 +29,6 @@ __all__ = [
     "KeyboardEndEffectorTeleop",
     "KeyboardRoverTeleopConfig",
     "KeyboardRoverTeleop",
+    "KeyboardSuckerTeleopConfig", 
+    "KeyboardSuckerTeleop"
 ]
