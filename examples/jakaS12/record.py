@@ -7,15 +7,17 @@ from lerobot.robots.jakaS12 import JakaS12, JakaS12Config
 from lerobot.scripts.lerobot_record import record_loop
 from lerobot.teleoperators.keyboard import KeyboardSuckerTeleop, KeyboardSuckerTeleopConfig
 from lerobot.teleoperators.jakaS12_leader import JakaS12Leader, JakaS12LeaderConfig
+from lerobot.teleoperators.utils import TeleopEvents
 from lerobot.utils.constants import ACTION, OBS_STR
 from lerobot.utils.utils import log_say
+from loguru import logger 
 
 NUM_EPISODES = 2
 FPS = 30
 EPISODE_TIME_SEC = 30
 RESET_TIME_SEC = 10
 TASK_DESCRIPTION = "FPC insert"
-HF_REPO_ID = "<hf_username>/<dataset_repo_id>"
+HF_REPO_ID = "Dav1nGen/data_1"
 
 # Create the robot and teleoperator configurations
 robot_config = JakaS12Config(arm_ip="192.168.1.5",
@@ -83,7 +85,8 @@ while recorded_episodes < NUM_EPISODES and not events["stop_recording"]:
     )
 
     teleop_events = keyboard.get_teleop_events()
-    if teleop_events["terminate_episode"]:
+    logger.info(f"get_teleop_events !")
+    if teleop_events[TeleopEvents.TERMINATE_EPISODE]:
         events["stop_recording"] = True
 
     # Reset the environment if not stopping or re-recording
@@ -121,4 +124,4 @@ leader_arm.disconnect()
 keyboard.disconnect()
 
 dataset.finalize()
-dataset.push_to_hub()
+# dataset.push_to_hub()
