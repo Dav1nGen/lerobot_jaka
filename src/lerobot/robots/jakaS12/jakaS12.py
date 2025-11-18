@@ -6,7 +6,7 @@ from .jaka_lib_2_3_0 import jkrc
 from ..robot import Robot
 from .modbus_tcp import ModbusTCP
 from .config_jakaS12 import JakaS12Config
-from jakaS12 import JakaS12Bus
+from .jakaS12_bus import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
@@ -28,7 +28,8 @@ class JakaS12(Robot):
         self._joint_position: tuple = (0, 0, 0, 0, 0, 0)
         self._cartesian_space_position_diff: dict[str, float] = {}
         self._robot = jkrc.RC(self._arm_ip)
-        self.bus = JakaS12Bus(self._robot)
+        self.bus = None
+        
 
         # Sucker
         self._sucker_ip: str = self._config.sucker_ip
@@ -91,6 +92,9 @@ class JakaS12(Robot):
         self._cameras["wrist"].connect()
         self._cameras["head"].connect()
         logger.info(f"Successfully connected to cameras")
+        
+        # Arm bus connenct
+        self.bus = JakaS12Bus(self._robot)
 
         self._is_connected = True
 
@@ -195,14 +199,13 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        logger.debug(f"Sending action to robot: {pos_diff}")
+        # logger.debug(f"Sending action to robot: {pos_diff}")
         
-        self._robot.edg_servo_p(end_pos=pos_diff,
-                                move_mode=1,
-                                step_num=50,
-                                robot_index=0)
+        # self._robot.edg_servo_p(end_pos=pos_diff,
+        #                         move_mode=1,
+        #                         step_num=50,
+        #                         robot_index=0)
         
-        time.sleep(0.008)
 
         return self._cartesian_space_position_diff
 
