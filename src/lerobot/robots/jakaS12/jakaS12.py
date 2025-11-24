@@ -29,7 +29,6 @@ class JakaS12(Robot):
         self._cartesian_space_position_diff: dict[str, float] = {}
         self._robot = jkrc.RC(self._arm_ip)
         self.bus = None
-        
 
         # Sucker
         self._sucker_ip: str = self._config.sucker_ip
@@ -65,17 +64,17 @@ class JakaS12(Robot):
             self._robot.enable_robot()
         except Exception as e:
             logger.error(f"Failed to enable robot at {self._arm_ip}: {e}")
-        
+
         # Init EDG extend
         self._robot.edg_init_extend(en=True,
                                     edg_stat_ip=self._arm_ip,
                                     edg_port=10010,
                                     edg_mode=0)
-        
+
         # Set servo move filter
         self._robot.servo_speed_foresight(200, 0.4)
         self._robot.servo_move_use_joint_LPF(0.5)
-        
+
         # Enable servo mode
         self._robot.servo_move_enable(1)
 
@@ -92,7 +91,7 @@ class JakaS12(Robot):
         self._cameras["wrist"].connect()
         self._cameras["head"].connect()
         logger.info(f"Successfully connected to cameras")
-        
+
         # Arm bus connenct
         self.bus = JakaS12Bus(self._robot)
 
@@ -200,12 +199,14 @@ class JakaS12(Robot):
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
         # logger.debug(f"Sending action to robot: {pos_diff}")
-        
+
         # self._robot.edg_servo_p(end_pos=pos_diff,
         #                         move_mode=1,
         #                         step_num=50,
         #                         robot_index=0)
-        
+
+        self._robot.edg_init(False, "192.168.1.19")
+        self._robot.servo_p(pos_diff, 1, 3)
 
         return self._cartesian_space_position_diff
 
