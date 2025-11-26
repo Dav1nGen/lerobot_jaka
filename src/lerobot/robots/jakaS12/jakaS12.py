@@ -2,6 +2,7 @@ from loguru import logger
 import sys
 from typing import Any
 import time
+import threading
 from .jaka_lib_2_3_0 import jkrc
 from ..robot import Robot
 from .modbus_tcp import ModbusTCP
@@ -40,6 +41,9 @@ class JakaS12(Robot):
 
         # Connect to arm & sucker & cameras
         self.connect()
+        
+        command_interpolation=threading.Thread(target=self.insert_command_loop,daemon=True)
+        command_interpolation.start()
 
     def connect(self) -> None:
 
@@ -200,13 +204,10 @@ class JakaS12(Robot):
 
         # logger.debug(f"Sending action to robot: {pos_diff}")
 
-        # self._robot.edg_servo_p(end_pos=pos_diff,
-        #                         move_mode=1,
-        #                         step_num=50,
-        #                         robot_index=0)
-
-        self._robot.edg_init(False, "192.168.1.19")
-        self._robot.servo_p(pos_diff, 1, 3)
+        self._robot.edg_servo_p(end_pos=pos_diff,
+                                move_mode=1,
+                                step_num=50,
+                                robot_index=0)
 
         return self._cartesian_space_position_diff
 
@@ -226,6 +227,15 @@ class JakaS12(Robot):
             # The action to be logged is the state itself.
             base_action["sucker_state"] = self._sucker_state
         return base_action
+    
+    def insert_command_loop(self)-> None:
+        while(1):
+            self._robot.edg_servo_p(end_pos=[0,0,0,0,0,0],
+                                    move_mode=1,
+                                    step_num=50,
+                                    robot_index=0)
+            time.sleep(0.006)
+        
 
     def is_calibrated(self) -> bool:
         pass

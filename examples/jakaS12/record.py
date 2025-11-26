@@ -10,7 +10,8 @@ from lerobot.teleoperators.jakaS12_leader import JakaS12Leader, JakaS12LeaderCon
 from lerobot.teleoperators.utils import TeleopEvents
 from lerobot.utils.constants import ACTION, OBS_STR
 from lerobot.utils.utils import log_say
-from loguru import logger 
+from loguru import logger
+import threading
 
 NUM_EPISODES = 2
 FPS = 30
@@ -85,7 +86,6 @@ while recorded_episodes < NUM_EPISODES and not events["stop_recording"]:
     )
 
     teleop_events = keyboard.get_teleop_events()
-    logger.info(f"get_teleop_events !")
     if teleop_events[TeleopEvents.TERMINATE_EPISODE]:
         events["stop_recording"] = True
 
