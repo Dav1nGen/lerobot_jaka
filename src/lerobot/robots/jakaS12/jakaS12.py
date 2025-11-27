@@ -41,9 +41,6 @@ class JakaS12(Robot):
 
         # Connect to arm & sucker & cameras
         self.connect()
-        
-        command_interpolation=threading.Thread(target=self.insert_command_loop,daemon=True)
-        command_interpolation.start()
 
     def connect(self) -> None:
 
@@ -76,6 +73,7 @@ class JakaS12(Robot):
                                     edg_mode=0)
 
         # Set servo move filter
+        self._robot.servo_move_enable(0)
         self._robot.servo_speed_foresight(200, 0.4)
         self._robot.servo_move_use_joint_LPF(0.5)
 
@@ -202,11 +200,11 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        # logger.debug(f"Sending action to robot: {pos_diff}")
+        logger.debug(f"Sending action to robot: {pos_diff}")
 
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
-                                step_num=50,
+                                step_num=1,
                                 robot_index=0)
 
         return self._cartesian_space_position_diff
@@ -227,15 +225,6 @@ class JakaS12(Robot):
             # The action to be logged is the state itself.
             base_action["sucker_state"] = self._sucker_state
         return base_action
-    
-    def insert_command_loop(self)-> None:
-        while(1):
-            self._robot.edg_servo_p(end_pos=[0,0,0,0,0,0],
-                                    move_mode=1,
-                                    step_num=50,
-                                    robot_index=0)
-            time.sleep(0.006)
-        
 
     def is_calibrated(self) -> bool:
         pass
