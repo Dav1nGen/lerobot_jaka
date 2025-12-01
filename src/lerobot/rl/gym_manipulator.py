@@ -206,7 +206,7 @@ class RobotEnv(gym.Env):
         self.observation_space = gym.spaces.Dict(observation_spaces)
 
         # Define the action space for joint positions along with setting an intervention flag.
-        action_dim = 3 # Dav1nGen: modify to joint dim 
+        action_dim = len(self._joint_names) # Dav1nGen: modify to joint dim 
         bounds = {}
         bounds["min"] = -np.ones(action_dim)
         bounds["max"] = np.ones(action_dim)
@@ -262,14 +262,16 @@ class RobotEnv(gym.Env):
                     "x": action[0].item(),
                     "y": action[1].item(),
                     "z": action[2].item(),
-                    "rx": 0.0,
-                    "ry": 0.0,
-                    "rz": 0.0,
+                    "rx": action[3].item(),
+                    "ry": action[4].item(),
+                    "rz": action[5].item(),
                 }
             }
             if self.use_gripper:
-                # This is a guess for the gripper action.
-                action_dict["sucker_action"] = 1 if action[3] > 1.0 else 0
+                # Assuming gripper action is the last element.
+                # The value for sucker_action might need adjustment based on what the driver expects.
+                # Assuming 1 for open, 0 for close, and action[6] is in [0, 2] from action space.
+                action_dict["sucker_action"] = 1 if action[6] > 1.0 else 0
             self.robot.send_action(action_dict)
         else:
             joint_targets_dict = {f"{key}.pos": action[i] for i, key in enumerate(self.robot.bus.motors.keys())}
@@ -665,9 +667,9 @@ def control_loop(
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)
-        neutral_action = torch.tensor([0.0, 0.0, 0.0], dtype=torch.float32)
+        neutral_action = torch.zeros(env.action_space.shape, dtype=torch.float32)
         if use_gripper:
-            neutral_action = torch.cat([neutral_action, torch.tensor([1.0])])  # Gripper stay
+            neutral_action[-1] = 1.0  # Gripper stay
 
         # Use the new step function
         transition = step_env_and_process_transition(
