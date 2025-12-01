@@ -134,22 +134,11 @@ class JakaS12Leader(Teleoperator):
         }
 
     # Get the cartesian position difference of the remote control arm in each cycle
-    def get_action(self) -> dict[str, Any]:
-
+    def get_action(self) -> np.ndarray:
         with self._lock:
-            cart_pos_diff_dict: dict[str, float] = {
-                "x": self._cart_space_position_diff[0],
-                "y": self._cart_space_position_diff[1],
-                "z": self._cart_space_position_diff[2],
-                "rx": self._cart_space_position_diff[3],
-                "ry": self._cart_space_position_diff[4],
-                "rz": self._cart_space_position_diff[5]
-            }
-
-        action_dict: dict[str, Any] = {
-            "cart_pos_diff_dict": cart_pos_diff_dict,
-        }
-        return action_dict
+            # self._cart_space_position_diff is a tuple
+            action = np.array(self._cart_space_position_diff, dtype=np.float32)
+        return action
 
     @property
     def feedback_features(self) -> dict[str, type]:
@@ -169,12 +158,18 @@ class JakaS12Leader(Teleoperator):
         pass
 
     def get_teleop_events(self) -> dict[str, bool]:
+        with self._lock:
+            # A simple heuristic for intervention: if the arm has moved.
+            # Using only translation part for simplicity.
+            pos_diff = np.array(self._cart_space_position_diff[:3])
+            is_intervention = np.linalg.norm(pos_diff) > 1e-5  # Threshold for movement
+
         return {
-            "grip": False,
+            "grip": True,
             "ungrip": False,
             "finish_episode": False,
             "rerecord_episode": False,
-            "is_intervention": False,
+            "is_intervention": is_intervention,
         }
 
     #############################
