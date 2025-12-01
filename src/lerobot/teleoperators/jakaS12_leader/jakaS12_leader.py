@@ -128,9 +128,9 @@ class JakaS12Leader(Teleoperator):
     def action_features(self) -> dict:
         """Return a description of the action features."""
         return {
-            "shape": (3,),
+            "shape": (6,),
             "dtype": "float32",
-            "names": ["x", "y", "z"],
+            "names": ["x", "y", "z", "rx", "ry", "rz"],
         }
 
     # Get the cartesian position difference of the remote control arm in each cycle
@@ -167,7 +167,7 @@ class JakaS12Leader(Teleoperator):
 
     def configure(self) -> None:
         pass
-    
+
     def get_teleop_events(self) -> dict[str, bool]:
         return {
             "grip": False,
@@ -181,7 +181,7 @@ class JakaS12Leader(Teleoperator):
     ########Custom method########
     #############################
 
-    # Initialize robot parameters   
+    # Initialize robot parameters
     def _init_parameters(self) -> None:
         self._cart_space_position = self._robot.get_tcp_position()[1]
         self._last_cart_space_position = self._robot.get_tcp_position()[1]
@@ -198,9 +198,10 @@ class JakaS12Leader(Teleoperator):
             cart_space_position_diff = list(
                 np.array(self._cart_space_position) -
                 np.array(self._last_cart_space_position))
-            
+
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
-            
+
             with self._lock:
-                self._cart_space_position_diff = tuple(cart_space_position_diff)
+                self._cart_space_position_diff = tuple(
+                    cart_space_position_diff)
