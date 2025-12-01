@@ -88,7 +88,7 @@ def log_rerun_data(
             elif isinstance(v, np.ndarray):
                 if v.ndim == 1:
                     for i, vi in enumerate(v):
-                        rr.log(f"{key}_{i}", rr.Scalar(float(vi)))
+                        rr.log(f"{key}_{i}", rr.Scalars(float(vi)))
                 else:
                     # Fall back to flattening higher-dimensional arrays
                     flat = v.flatten()

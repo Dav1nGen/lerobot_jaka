@@ -13,12 +13,12 @@ from lerobot.utils.utils import log_say
 from loguru import logger
 import threading
 
-NUM_EPISODES = 2
+NUM_EPISODES = 3
 FPS = 30
 EPISODE_TIME_SEC = 30
 RESET_TIME_SEC = 10
 TASK_DESCRIPTION = "FPC insert"
-HF_REPO_ID = "Dav1nGen/data_1"
+HF_REPO_ID = "Dav1nGen/data_3"
 
 # Create the robot and teleoperator configurations
 robot_config = JakaS12Config(arm_ip="192.168.1.5",
@@ -111,17 +111,95 @@ while recorded_episodes < NUM_EPISODES and not events["stop_recording"]:
         events["rerecord_episode"] = False
         events["exit_early"] = False
         dataset.clear_episode_buffer()
+        logger.debug("clear episode buffer!")
         continue
 
     # Save episode
     dataset.save_episode()
+    logger.debug("Save episode!")
     recorded_episodes += 1
 
 # Clean up
-log_say("Stop recording")
+logger.debug("Stop recording")
 robot.disconnect()
 leader_arm.disconnect()
 keyboard.disconnect()
 
 dataset.finalize()
 # dataset.push_to_hub()
+
+"""
+Example recording with bimanual so100:
+```shell
+lerobot-record \
+  --robot.type=bi_so100_follower \
+  --robot.left_arm_port=/dev/tty.usbmodem5A460851411 \
+  --robot.right_arm_port=/dev/tty.usbmodem5A460812391 \
+  --robot.id=bimanual_follower \
+  --robot.cameras='{
+    left: {"type": "opencv", "index_or_path": 0, "width": 640, "height": 480, "fps": 30},
+    top: {"type": "opencv", "index_or_path": 1, "width": 640, "height": 480, "fps": 30},
+    right: {"type": "opencv", "index_or_path": 2, "width": 640, "height": 480, "fps": 30}
+  }' \
+  --teleop.type=bi_so100_leader \
+  --teleop.left_arm_port=/dev/tty.usbmodem5A460828611 \
+  --teleop.right_arm_port=/dev/tty.usbmodem5A460826981 \
+  --teleop.id=bimanual_leader \
+  --display_data=true \
+  --dataset.repo_id=${HF_USER}/bimanual-so100-handover-cube \
+  --dataset.num_episodes=25 \
+  --dataset.single_task="Grab and handover the red cube to the other arm"
+```
+
+Example recording with bimanual JakaS12:
+```shell
+lerobot-record \
+  --robot.type=jakaS12 \
+  --robot.id=JakaS12 \
+  --robot.arm_ip="192.168.1.5" \
+  --robot.sucker_ip="192.168.1.8" \
+  --robot.sucker_port=502 \
+  --robot.coils_address=8 \
+  --robot.cameras='{
+    head: {"type": "realsense", "serial_number_or_name": "243422072128", "width": 640, "height": 480, "fps": 30, "color_mode": "rgb"},
+    wrist: {"type": "realsense", "serial_number_or_name": "346522072291", "width": 640, "height": 480, "fps": 30, "color_mode": "rgb"}
+  }' \
+  --teleop.type=jakaS12_leader \
+  --teleop.arm_ip="192.168.1.3" \
+  --teleop.drag_friction_compensation_gain="(80, 80, 80, 80, 80, 80)" \
+  --teleop.is_block=False \
+  --teleop.joint_speed=3 \
+  --teleop.joint_acc=3 \
+  --display_data=true \
+  --dataset.repo_id=$Dav1nGen/data_1 \
+  --dataset.num_episodes=3 \
+  --dataset.single_task="Insert_FPC"
+```
+
+Example recording with bimanual JakaS12:
+```shell
+lerobot-record \
+  --robot.type=jakaS12 \
+  --robot.id=JakaS12 \
+  --robot.arm_ip="192.168.1.5" \
+  --robot.sucker_ip="192.168.1.8" \
+  --robot.sucker_port=502 \
+  --robot.coils_address=8 \
+  --robot.cameras='{
+    head: {"type": "opencv", "index_or_path": 4, "width": 640, "height": 480, "fps": 30, "color_mode": "rgb"},
+    wrist: {"type": "opencv", "index_or_path": 10, "width": 640, "height": 480, "fps": 30, "color_mode": "rgb"}
+  }' \
+  --teleop.type=jakaS12_leader \
+  --teleop.arm_ip="192.168.1.3" \
+  --teleop.drag_friction_compensation_gain="(80, 80, 80, 80, 80, 80)" \
+  --teleop.is_block=False \
+  --teleop.joint_speed=3 \
+  --teleop.joint_acc=3 \
+  --display_data=true \
+  --dataset.push_to_hub=false \
+  --dataset.repo_id="dav1ngen/data_1" \
+  --dataset.root="/home/joysonrobot/lerobot_dataset/data_1" \
+  --dataset.num_episodes=1 \
+  --dataset.single_task="Insert_FPC"
+```
+"""
