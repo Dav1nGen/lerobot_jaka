@@ -39,7 +39,7 @@ class JakaS12(Robot):
                                             port=self._sucker_port)
         self._sucker_state: bool = False
 
-        # Connect to arm & sucker & cameras
+        # Connect to arm & sucker & _cameras
         self.connect()
 
     def connect(self) -> None:
@@ -92,7 +92,7 @@ class JakaS12(Robot):
         self._cameras = make_cameras_from_configs(self._config.cameras)
         self._cameras["wrist"].connect()
         self._cameras["head"].connect()
-        logger.info(f"Successfully connected to cameras")
+        logger.info(f"Successfully connected to _cameras")
 
         # Arm bus connenct
         self.bus = JakaS12Bus(self._robot)
@@ -116,18 +116,36 @@ class JakaS12(Robot):
     def is_connected(self) -> bool:
         return self._is_connected
 
+    # @property
+    # def _joint_feature(self) -> dict[str, float]:
+        # joint_position = self._robot.get_joint_position()[1]
+        # self._joint_position = joint_position
+        # return {
+        #     "joint1._joint_position": self._joint_position[0],
+        #     "joint2._joint_position": self._joint_position[1],
+        #     "joint3._joint_position": self._joint_position[2],
+        #     "joint4._joint_position": self._joint_position[3],
+        #     "joint5._joint_position": self._joint_position[4],
+        #     "joint6._joint_position": self._joint_position[5]
+        # }
+        
     @property
     def _joint_feature(self) -> dict[str, float]:
         joint_position = self._robot.get_joint_position()[1]
         self._joint_position = joint_position
-        return {
-            "joint_1": self._joint_position[0],
-            "joint_2": self._joint_position[1],
-            "joint_3": self._joint_position[2],
-            "joint_4": self._joint_position[3],
-            "joint_5": self._joint_position[4],
-            "joint_6": self._joint_position[5]
-        }
+
+        feature = {}
+        for i in range(6):
+            name = f"joint{i+1}"
+
+            # gym_manipulator 要从 obs_dict[name._joint_position] 取
+            feature[f"{name}._joint_position"] = self._joint_position[i]
+
+            # gym_manipulator 生成 raw dict 时要用 name.pos 作键
+            feature[f"{name}.pos"] = self._joint_position[i]
+
+        return feature
+
 
     @property
     def _cameras_feature(self) -> dict[str, dict]:
@@ -157,21 +175,23 @@ class JakaS12(Robot):
     def get_observation(self) -> dict[str, Any]:
 
         # Joint feature
-        joint_feature_dict: dict[str, float] = self._joint_feature
+        joint_feature: dict[str, float] = self._joint_feature
 
         # Sucker feature
         sucker_feature: dict[str, bool] = self._sucker_feature
+        
+        # Camera feature
+        camera_feature: dict[str, Any] = {}
 
-        # Capture images from cameras
+        # Capture images from _cameras
         for cam_key, cam in self._cameras.items():
-            camera_feature: dict[str, Any] = {}
             start = time.perf_counter()
             camera_feature[cam_key] = cam.async_read()
             dt_ms = (time.perf_counter() - start) * 1e3
             # logger.debug(f"{self} read {cam_key}: {dt_ms:.1f}ms")
 
         observation_dict = {
-            **joint_feature_dict,
+            **joint_feature,
             **sucker_feature,
             **camera_feature
         }
@@ -200,7 +220,7 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        logger.debug(f"Sending action to robot: {pos_diff}")
+        # logger.debug(f"Sending action to robot: {pos_diff}")
 
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,

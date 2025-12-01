@@ -70,6 +70,7 @@ from lerobot.teleoperators import (
     gamepad,  # noqa: F401
     keyboard,  # noqa: F401
     so101_leader,  # noqa: F401
+    jakaS12_leader
 )
 
 from lerobot.teleoperators.utils import make_teleoperator_from_config
