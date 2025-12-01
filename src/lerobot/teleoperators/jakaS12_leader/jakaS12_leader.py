@@ -125,21 +125,13 @@ class JakaS12Leader(Teleoperator):
 
     # Robot action features(sucker and cartesian position)
     @property
-    def action_features(self) -> dict[str, Any]:
-
-        cart_pos_diff_dict: dict[str, float] = {
-            "x": float,
-            "y": float,
-            "z": float,
-            "rx": float,
-            "ry": float,
-            "rz": float
+    def action_features(self) -> dict:
+        """Return a description of the action features."""
+        return {
+            "shape": (3,),
+            "dtype": "float32",
+            "names": ["x", "y", "z"],
         }
-
-        action_features_dict: dict[str, Any] = {
-            "cart_pos_diff_dict": cart_pos_diff_dict,
-        }
-        return action_features_dict
 
     # Get the cartesian position difference of the remote control arm in each cycle
     def get_action(self) -> dict[str, Any]:
@@ -175,6 +167,15 @@ class JakaS12Leader(Teleoperator):
 
     def configure(self) -> None:
         pass
+    
+    def get_teleop_events(self) -> dict[str, bool]:
+        return {
+            "grip": False,
+            "ungrip": False,
+            "finish_episode": False,
+            "rerecord_episode": False,
+            "is_intervention": False,
+        }
 
     #############################
     ########Custom method########

@@ -171,8 +171,9 @@ class RobotEnv(gym.Env):
         """Get current robot observation including joint positions and camera images."""
         obs_dict = self.robot.get_observation()
         raw_joint_joint_position = {f"{name}.pos": obs_dict[f"{name}._joint_position"] for name in self._joint_names}
-        joint_positions = np.array([raw_joint_joint_position[f"{name}._joint_position"] for name in self._joint_names])
-
+        # joint_positions = np.array([raw_joint_joint_position[f"{name}._joint_position"] for name in self._joint_names])
+        joint_positions = np.array([raw_joint_joint_position[f"{name}.pos"] for name in self._joint_names])
+        
         images = {key: obs_dict[key] for key in self._image_keys}
 
         return {"agent_pos": joint_positions, "pixels": images, **raw_joint_joint_position}
@@ -205,7 +206,7 @@ class RobotEnv(gym.Env):
         self.observation_space = gym.spaces.Dict(observation_spaces)
 
         # Define the action space for joint positions along with setting an intervention flag.
-        action_dim = 3
+        action_dim = 3 # Dav1nGen: modify to joint dim 
         bounds = {}
         bounds["min"] = -np.ones(action_dim)
         bounds["max"] = np.ones(action_dim)
@@ -255,9 +256,24 @@ class RobotEnv(gym.Env):
 
     def step(self, action) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         """Execute one environment step with given action."""
-        joint_targets_dict = {f"{key}.pos": action[i] for i, key in enumerate(self.robot.bus.motors.keys())}
-
-        self.robot.send_action(joint_targets_dict)
+        if isinstance(self.robot, jakaS12.JakaS12):
+            action_dict = {
+                "cart_pos_diff_dict": {
+                    "x": action[0].item(),
+                    "y": action[1].item(),
+                    "z": action[2].item(),
+                    "rx": 0.0,
+                    "ry": 0.0,
+                    "rz": 0.0,
+                }
+            }
+            if self.use_gripper:
+                # This is a guess for the gripper action.
+                action_dict["sucker_action"] = 1 if action[3] > 1.0 else 0
+            self.robot.send_action(action_dict)
+        else:
+            joint_targets_dict = {f"{key}.pos": action[i] for i, key in enumerate(self.robot.bus.motors.keys())}
+            self.robot.send_action(joint_targets_dict)
 
         obs = self._get_observation()
 

@@ -8,24 +8,27 @@ class JakaS12Bus(RobotBusBase):
 
     def __init__(self, jaka_robot):
         self._robot = jaka_robot
-        self.motors: dict[str, float64] = {
-            "joint1": float64,
-            "joint2": float64,
-            "joint3": float64,
-            "joint4": float64,
-            "joint5": float64,
-            "joint6": float64
+        self.motors = {
+            "joint1": 0.0,
+            "joint2": 0.0,
+            "joint3": 0.0,
+            "joint4": 0.0,
+            "joint5": 0.0,
+            "joint6": 0.0,
         }
+
         joint_positions = self._robot.get_joint_position()[1]
-        self.motors = dict(zip(self.motors.keys(), joint_positions))
+        for i, key in enumerate(self.motors.keys()):
+            self.motors[key] = float(joint_positions[i])
 
     def sync_read(self, dict_name: str) -> dict[str, float64]:
-        self.motors = self._robot.get_joint_position()[1]
-        joint_position = self._robot.get_joint_position()[1]
-        return {
-            key: pos
-            for key, pos in zip(self.motors.keys(), joint_position)
-        }
+        joint_positions = self._robot.get_joint_position()[1]
+
+        for i, key in enumerate(self.motors.keys()):
+            self.motors[key] = float(joint_positions[i])
+            
+        return self.motors
 
     def sync_write(self, dict_name: str, joint_position: dict[str, float64]):
-        self._robot.servo_j(tuple(joint_position))
+        positions = [joint_position[key] for key in self.motors.keys()]
+        self._robot.servo_j(tuple(positions), 1)
