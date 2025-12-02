@@ -115,19 +115,6 @@ class JakaS12(Robot):
     @property
     def is_connected(self) -> bool:
         return self._is_connected
-
-    # @property
-    # def _joint_feature(self) -> dict[str, float]:
-        # joint_position = self._robot.get_joint_position()[1]
-        # self._joint_position = joint_position
-        # return {
-        #     "joint1._joint_position": self._joint_position[0],
-        #     "joint2._joint_position": self._joint_position[1],
-        #     "joint3._joint_position": self._joint_position[2],
-        #     "joint4._joint_position": self._joint_position[3],
-        #     "joint5._joint_position": self._joint_position[4],
-        #     "joint6._joint_position": self._joint_position[5]
-        # }
         
     @property
     def _joint_feature(self) -> dict[str, float]:
@@ -138,10 +125,10 @@ class JakaS12(Robot):
         for i in range(6):
             name = f"joint{i+1}"
 
-            # gym_manipulator 要从 obs_dict[name._joint_position] 取
+            # The gym_manipulator retrieves data from obs_dict[name._joint_position]
             feature[f"{name}._joint_position"] = self._joint_position[i]
 
-            # gym_manipulator 生成 raw dict 时要用 name.pos 作键
+            # When generating a raw dict, the gym_manipulator needs to use name.pos as the key
             feature[f"{name}.pos"] = self._joint_position[i]
 
         return feature
@@ -220,7 +207,7 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        # logger.debug(f"Sending action to robot: {pos_diff}")
+        logger.debug(f"Sending action to robot: {pos_diff}")
 
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,

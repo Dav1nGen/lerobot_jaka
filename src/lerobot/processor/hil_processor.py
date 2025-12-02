@@ -421,14 +421,27 @@ class InterventionActionProcessorStep(ProcessorStep):
             reward, and termination status.
         """
         action = transition.get(TransitionKey.ACTION)
-        if not isinstance(action, PolicyAction):
-            raise ValueError(f"Action should be a PolicyAction type got {type(action)}")
+        # In gym_manipulator, the action is a raw tensor, not a PolicyAction
+        # Let's be more flexible with the type check
+        if not isinstance(action, torch.Tensor):
+            raise ValueError(f"Action should be a torch.Tensor type got {type(action)}")
 
         # Get intervention signals from complementary data
         info = transition.get(TransitionKey.INFO, {})
         complementary_data = transition.get(TransitionKey.COMPLEMENTARY_DATA, {})
-        teleop_action = complementary_data.get(TELEOP_ACTION_KEY, {})
-        is_intervention = info.get(TeleopEvents.IS_INTERVENTION, False)
+        teleop_action = complementary_data.get(TELEOP_ACTION_KEY)
+        
+        # Original is_intervention from a separate call, which causes a race condition.
+        # is_intervention = info.get(TeleopEvents.IS_INTERVENTION, False)
+        
+        # FIX: Re-calculate is_intervention based on the teleop_action we already have.
+        # This ensures the action and the intervention flag are consistent.
+        is_intervention = False
+        if teleop_action and isinstance(teleop_action, dict) and 'cart_pos_diff_dict' in teleop_action:
+            pos_diff_dict = teleop_action['cart_pos_diff_dict']
+            pos_diff = np.array([pos_diff_dict.get('x',0), pos_diff_dict.get('y',0), pos_diff_dict.get('z',0)])
+            is_intervention = np.linalg.norm(pos_diff) > 1e-5
+
         terminate_episode = info.get(TeleopEvents.TERMINATE_EPISODE, False)
         success = info.get(TeleopEvents.SUCCESS, False)
         rerecord_episode = info.get(TeleopEvents.RERECORD_EPISODE, False)
@@ -438,21 +451,27 @@ class InterventionActionProcessorStep(ProcessorStep):
         # Override action if intervention is active
         if is_intervention and teleop_action is not None:
             if isinstance(teleop_action, dict):
-                # Convert teleop_action dict to tensor format
-                action_list = [
-                    teleop_action.get("delta_x", 0.0),
-                    teleop_action.get("delta_y", 0.0),
-                    teleop_action.get("delta_z", 0.0),
-                ]
-                if self.use_gripper:
-                    action_list.append(teleop_action.get(GRIPPER_KEY, 1.0))
+                # FIX: Correctly parse the nested dict from jakaS12_leader
+                if 'cart_pos_diff_dict' in teleop_action:
+                    action_list = list(teleop_action['cart_pos_diff_dict'].values())
+                else: # Original logic for other teleop devices
+                    action_list = [
+                        teleop_action.get("delta_x", 0.0),
+                        teleop_action.get("delta_y", 0.0),
+                        teleop_action.get("delta_z", 0.0),
+                    ]
+                    if self.use_gripper:
+                        action_list.append(teleop_action.get(GRIPPER_KEY, 1.0))
             elif isinstance(teleop_action, np.ndarray):
+                action_list = teleop_action.tolist()
+            elif isinstance(teleop_action, torch.Tensor):
                 action_list = teleop_action.tolist()
             else:
                 action_list = teleop_action
 
-            teleop_action_tensor = torch.tensor(action_list, dtype=action.dtype, device=action.device)
-            new_transition[TransitionKey.ACTION] = teleop_action_tensor
+            if action_list is not None:
+                teleop_action_tensor = torch.tensor(action_list, dtype=action.dtype, device=action.device)
+                new_transition[TransitionKey.ACTION] = teleop_action_tensor
 
         # Handle episode termination
         new_transition[TransitionKey.DONE] = bool(terminate_episode) or (
