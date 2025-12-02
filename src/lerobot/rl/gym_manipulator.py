@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+from loguru import logger
 import time
 from dataclasses import dataclass
 from typing import Any

@@ -189,8 +189,12 @@ class JakaS12Leader(Teleoperator):
     def _get_cartesian_space_position_diff(self) -> None:
         while self._is_running:
             self._last_cart_space_position = self._cart_space_position
-            time.sleep(0.01)
+            
+            # logger.debug(f"Cartesian space position diff before: {self._cart_space_position}")
+            time.sleep(0.05)
             self._cart_space_position = self._robot.get_tcp_position()[1]
+            
+            # logger.debug(f"Cartesian space position diff later: {self._cart_space_position}")
 
             # Calculate cart space diff
             cart_space_position_diff = list(
@@ -199,6 +203,8 @@ class JakaS12Leader(Teleoperator):
 
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
+                
+            # logger.debug(f"Cartesian space position diff: {cart_space_position_diff}")
 
             with self._lock:
                 self._cart_space_position_diff = tuple(
