@@ -134,11 +134,14 @@ class JakaS12Leader(Teleoperator):
         }
 
     # Get the cartesian position difference of the remote control arm in each cycle
-    def get_action(self) -> np.ndarray:
+    def get_action(self) -> dict[str, Any]:
         with self._lock:
             # self._cart_space_position_diff is a tuple
-            action = np.array(self._cart_space_position_diff, dtype=np.float32)
-        return action
+            action_np = np.array(self._cart_space_position_diff, dtype=np.float32)
+
+        action_names = self.action_features["names"]
+        cart_pos_diff_dict = {name: action_np[i] for i, name in enumerate(action_names)}
+        return {"cart_pos_diff_dict": cart_pos_diff_dict}
 
     @property
     def feedback_features(self) -> dict[str, type]:
