@@ -13,7 +13,7 @@ from lerobot.utils.utils import log_say
 from loguru import logger
 import threading
 
-NUM_EPISODES = 3
+NUM_EPISODES = 3000
 FPS = 30
 EPISODE_TIME_SEC = 30
 RESET_TIME_SEC = 10
