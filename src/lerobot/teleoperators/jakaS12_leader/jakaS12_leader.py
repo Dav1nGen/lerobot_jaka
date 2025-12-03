@@ -191,7 +191,7 @@ class JakaS12Leader(Teleoperator):
             self._last_cart_space_position = self._cart_space_position
             
             # logger.debug(f"Cartesian space position diff before: {self._cart_space_position}")
-            time.sleep(0.05)
+            time.sleep(0.01)
             self._cart_space_position = self._robot.get_tcp_position()[1]
             
             # logger.debug(f"Cartesian space position diff later: {self._cart_space_position}")
