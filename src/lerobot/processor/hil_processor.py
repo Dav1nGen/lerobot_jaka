@@ -454,6 +454,8 @@ class InterventionActionProcessorStep(ProcessorStep):
                 # FIX: Correctly parse the nested dict from jakaS12_leader
                 if 'cart_pos_diff_dict' in teleop_action:
                     action_list = list(teleop_action['cart_pos_diff_dict'].values())
+                    if self.use_gripper:
+                        action_list.append(teleop_action.get(GRIPPER_KEY, 1.0))
                 else: # Original logic for other teleop devices
                     action_list = [
                         teleop_action.get("delta_x", 0.0),

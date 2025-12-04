@@ -127,21 +127,38 @@ class JakaS12Leader(Teleoperator):
     @property
     def action_features(self) -> dict:
         """Return a description of the action features."""
+        shape = 6
+        names = ["x", "y", "z", "rx", "ry", "rz"]
+        if self._config.use_gripper:
+            shape = 7
+            names.append("gripper")
         return {
-            "shape": (6,),
+            "shape": (shape, ),
             "dtype": "float32",
-            "names": ["x", "y", "z", "rx", "ry", "rz"],
+            "names": names,
         }
 
     # Get the cartesian position difference of the remote control arm in each cycle
     def get_action(self) -> dict[str, Any]:
         with self._lock:
             # self._cart_space_position_diff is a tuple
-            action_np = np.array(self._cart_space_position_diff, dtype=np.float32)
+            action_np = np.array(self._cart_space_position_diff,
+                                 dtype=np.float32)
 
-        action_names = self.action_features["names"]
-        cart_pos_diff_dict = {name: action_np[i] for i, name in enumerate(action_names)}
-        return {"cart_pos_diff_dict": cart_pos_diff_dict}
+        action_names = [
+            name for name in self.action_features["names"] if name != "gripper"
+        ]
+        cart_pos_diff_dict = {
+            name: action_np[i]
+            for i, name in enumerate(action_names)
+        }
+
+        action_dict = {"cart_pos_diff_dict": cart_pos_diff_dict}
+
+        if self._config.use_gripper:
+            action_dict["gripper"] = 0  # close
+
+        return action_dict
 
     @property
     def feedback_features(self) -> dict[str, type]:
@@ -165,7 +182,8 @@ class JakaS12Leader(Teleoperator):
             # A simple heuristic for intervention: if the arm has moved.
             # Using only translation part for simplicity.
             pos_diff = np.array(self._cart_space_position_diff[:3])
-            is_intervention = np.linalg.norm(pos_diff) > 1e-5  # Threshold for movement
+            is_intervention = np.linalg.norm(
+                pos_diff) > 1e-5  # Threshold for movement
 
         return {
             "grip": True,
@@ -189,11 +207,11 @@ class JakaS12Leader(Teleoperator):
     def _get_cartesian_space_position_diff(self) -> None:
         while self._is_running:
             self._last_cart_space_position = self._cart_space_position
-            
+
             # logger.debug(f"Cartesian space position diff before: {self._cart_space_position}")
             time.sleep(0.01)
             self._cart_space_position = self._robot.get_tcp_position()[1]
-            
+
             # logger.debug(f"Cartesian space position diff later: {self._cart_space_position}")
 
             # Calculate cart space diff
@@ -203,7 +221,7 @@ class JakaS12Leader(Teleoperator):
 
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
-                
+
             # logger.debug(f"Cartesian space position diff: {cart_space_position_diff}")
 
             with self._lock:

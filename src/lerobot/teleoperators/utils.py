@@ -85,6 +85,10 @@ def make_teleoperator_from_config(config: TeleoperatorConfig) -> Teleoperator:
         from .jakaS12_leader import JakaS12Leader
 
         return JakaS12Leader(config)
+    elif config.type == "keyboard_sucker":
+        from .keyboard import KeyboardSuckerTeleop
+
+        return KeyboardSuckerTeleop(config)
         
     else:
         try:
