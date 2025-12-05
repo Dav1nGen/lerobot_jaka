@@ -9,8 +9,7 @@ from .modbus_tcp import ModbusTCP
 from .config_jakaS12 import JakaS12Config
 from .jakaS12_bus import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
-from lerobot.Dav1nGen_utils.frequency_manager import FrequencyManager
-from lerobot.Dav1nGen_utils.multi_frequency_visualizer import MultiFrequencyVisualizer
+from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
 
@@ -99,10 +98,9 @@ class JakaS12(Robot):
         self.bus = JakaS12Bus(self._robot)
 
         self._is_connected = True
+        
+        self.monitor = FPSMonitor()
 
-        self.manager = FrequencyManager(window=2.0)  
-        vis = MultiFrequencyVisualizer(self.manager)
-        vis.run()
 
     def disconnect(self) -> None:
         if not self._is_connected:
@@ -213,7 +211,7 @@ class JakaS12(Robot):
 
         # logger.debug(f"Sending action to robot: {pos_diff}")
 
-        self.manager.tick("edg_servo_p")
+        self.monitor.tick("send_action function")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
                                 step_num=1,
