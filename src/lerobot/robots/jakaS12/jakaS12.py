@@ -9,9 +9,10 @@ from .modbus_tcp import ModbusTCP
 from .config_jakaS12 import JakaS12Config
 from .jakaS12_bus import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
+from lerobot.Dav1nGen_utils.frequency_manager import FrequencyManager
+from lerobot.Dav1nGen_utils.multi_frequency_visualizer import MultiFrequencyVisualizer
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
-
 
 class JakaS12(Robot):
 
@@ -99,6 +100,10 @@ class JakaS12(Robot):
 
         self._is_connected = True
 
+        self.manager = FrequencyManager(window=2.0)  
+        vis = MultiFrequencyVisualizer(self.manager)
+        vis.run()
+
     def disconnect(self) -> None:
         if not self._is_connected:
             return
@@ -115,7 +120,7 @@ class JakaS12(Robot):
     @property
     def is_connected(self) -> bool:
         return self._is_connected
-        
+
     @property
     def _joint_feature(self) -> dict[str, float]:
         joint_position = self._robot.get_joint_position()[1]
@@ -132,7 +137,6 @@ class JakaS12(Robot):
             feature[f"{name}.pos"] = self._joint_position[i]
 
         return feature
-
 
     @property
     def _cameras_feature(self) -> dict[str, dict]:
@@ -166,15 +170,15 @@ class JakaS12(Robot):
 
         # Sucker feature
         sucker_feature: dict[str, bool] = self._sucker_feature
-        
+
         # Camera feature
         camera_feature: dict[str, Any] = {}
 
         # Capture images from _cameras
         for cam_key, cam in self._cameras.items():
-            start = time.perf_counter()
+            # start = time.perf_counter()
             camera_feature[cam_key] = cam.async_read()
-            dt_ms = (time.perf_counter() - start) * 1e3
+            # dt_ms = (time.perf_counter() - start) * 1e3
             # logger.debug(f"{self} read {cam_key}: {dt_ms:.1f}ms")
 
         observation_dict = {
@@ -209,6 +213,7 @@ class JakaS12(Robot):
 
         # logger.debug(f"Sending action to robot: {pos_diff}")
 
+        self.manager.tick("edg_servo_p")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
                                 step_num=1,
