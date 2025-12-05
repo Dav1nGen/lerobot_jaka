@@ -23,6 +23,7 @@ from typing import Any
 import gymnasium as gym
 import numpy as np
 import torch
+from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
 from lerobot.cameras import opencv  # noqa: F401
 from lerobot.configs import parser
@@ -579,6 +580,7 @@ def step_env_and_process_transition(
 
     return new_transition
 
+monitor = FPSMonitor()
 
 def control_loop(
     env: gym.Env,
@@ -598,6 +600,7 @@ def control_loop(
      cfg: gym_manipulator configuration
     """
     dt = 1.0 / cfg.env.fps
+    
 
     print(f"Starting control loop at {cfg.env.fps} FPS")
     print("Controls:")
@@ -665,6 +668,7 @@ def control_loop(
     episode_start_time = time.perf_counter()
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
+        monitor.tick("control_loop FPS")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)

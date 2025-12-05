@@ -71,7 +71,7 @@
             "max_gripper_pos": 30
         },
         "name": "real_robot",
-        "fps": 10
+        "fps": 15
     },
     "dataset": {
         "repo_id": "Dav1nGen/data_1",
