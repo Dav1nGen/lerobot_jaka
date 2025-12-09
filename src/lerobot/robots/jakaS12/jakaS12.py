@@ -13,6 +13,7 @@ from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
 
+
 class JakaS12(Robot):
 
     config_class = JakaS12Config
@@ -38,6 +39,9 @@ class JakaS12(Robot):
         self._sucker: ModbusTCP = ModbusTCP(ip=self._sucker_ip,
                                             port=self._sucker_port)
         self._sucker_state: bool = False
+
+        # Debug monitor
+        # self._monitor = FPSMonitor()
 
         # Connect to arm & sucker & _cameras
         self.connect()
@@ -98,9 +102,6 @@ class JakaS12(Robot):
         self.bus = JakaS12Bus(self._robot)
 
         self._is_connected = True
-        
-        self.monitor = FPSMonitor()
-
 
     def disconnect(self) -> None:
         if not self._is_connected:
@@ -195,6 +196,7 @@ class JakaS12(Robot):
     # Struct same as action_features
     def send_action(self, action: dict[str, Any]) -> dict[str, Any]:
 
+        # Adapt the hardcoded values in the step() function of the gym_manipulator.py file
         if 'cart_pos_diff_dict' in action:
             cart_pos_diff_dict = action['cart_pos_diff_dict']
         elif 'arm_cart_pos_diff_dict' in action:
@@ -206,12 +208,10 @@ class JakaS12(Robot):
 
         self._cartesian_space_position_diff: dict[str,
                                                   float] = cart_pos_diff_dict
-
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
         logger.debug(f"Sending action to robot: {pos_diff}")
 
-        self.monitor.tick("send_action function")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
                                 step_num=1,
