@@ -139,3 +139,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+# python -m lerobot.rl.gym_manipulator --config_path examples/jakaS12/env_conf.json

@@ -32,7 +32,8 @@
             "drag_friction_compensation_gain":"(80, 80, 80, 80, 80, 80)",
             "is_block": false,
             "joint_speed": 3,
-            "joint_acc": 3
+            "joint_acc": 3,
+            "use_gripper": false
         },
         "processor": {
             "control_mode": "keyboard",
@@ -70,13 +71,13 @@
             "max_gripper_pos": 30
         },
         "name": "real_robot",
-        "fps": 10
+        "fps": 15
     },
     "dataset": {
         "repo_id": "Dav1nGen/data_1",
         "root": "/home/joysonrobot/lerobot_dataset/data_1",
         "task": "FPC_insert",
-        "num_episodes_to_record": 30,
+        "num_episodes_to_record": 10,
         "replay_episode": 0,
         "push_to_hub": false
     },

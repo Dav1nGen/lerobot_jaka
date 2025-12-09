@@ -9,6 +9,7 @@ from .modbus_tcp import ModbusTCP
 from .config_jakaS12 import JakaS12Config
 from .jakaS12_bus import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
+from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
 # TODO: Dav1nGen: 1. Add robot end effector torque
 
@@ -38,6 +39,9 @@ class JakaS12(Robot):
         self._sucker: ModbusTCP = ModbusTCP(ip=self._sucker_ip,
                                             port=self._sucker_port)
         self._sucker_state: bool = False
+
+        # Debug monitor
+        # self._monitor = FPSMonitor()
 
         # Connect to arm & sucker & _cameras
         self.connect()
@@ -116,19 +120,6 @@ class JakaS12(Robot):
     def is_connected(self) -> bool:
         return self._is_connected
 
-    # @property
-    # def _joint_feature(self) -> dict[str, float]:
-        # joint_position = self._robot.get_joint_position()[1]
-        # self._joint_position = joint_position
-        # return {
-        #     "joint1._joint_position": self._joint_position[0],
-        #     "joint2._joint_position": self._joint_position[1],
-        #     "joint3._joint_position": self._joint_position[2],
-        #     "joint4._joint_position": self._joint_position[3],
-        #     "joint5._joint_position": self._joint_position[4],
-        #     "joint6._joint_position": self._joint_position[5]
-        # }
-        
     @property
     def _joint_feature(self) -> dict[str, float]:
         joint_position = self._robot.get_joint_position()[1]
@@ -138,14 +129,13 @@ class JakaS12(Robot):
         for i in range(6):
             name = f"joint{i+1}"
 
-            # gym_manipulator 要从 obs_dict[name._joint_position] 取
+            # The gym_manipulator retrieves data from obs_dict[name._joint_position]
             feature[f"{name}._joint_position"] = self._joint_position[i]
 
-            # gym_manipulator 生成 raw dict 时要用 name.pos 作键
+            # When generating a raw dict, the gym_manipulator needs to use name.pos as the key
             feature[f"{name}.pos"] = self._joint_position[i]
 
         return feature
-
 
     @property
     def _cameras_feature(self) -> dict[str, dict]:
@@ -179,15 +169,15 @@ class JakaS12(Robot):
 
         # Sucker feature
         sucker_feature: dict[str, bool] = self._sucker_feature
-        
+
         # Camera feature
         camera_feature: dict[str, Any] = {}
 
         # Capture images from _cameras
         for cam_key, cam in self._cameras.items():
-            start = time.perf_counter()
+            # start = time.perf_counter()
             camera_feature[cam_key] = cam.async_read()
-            dt_ms = (time.perf_counter() - start) * 1e3
+            # dt_ms = (time.perf_counter() - start) * 1e3
             # logger.debug(f"{self} read {cam_key}: {dt_ms:.1f}ms")
 
         observation_dict = {
@@ -206,6 +196,7 @@ class JakaS12(Robot):
     # Struct same as action_features
     def send_action(self, action: dict[str, Any]) -> dict[str, Any]:
 
+        # Adapt the hardcoded values in the step() function of the gym_manipulator.py file
         if 'cart_pos_diff_dict' in action:
             cart_pos_diff_dict = action['cart_pos_diff_dict']
         elif 'arm_cart_pos_diff_dict' in action:
@@ -217,10 +208,9 @@ class JakaS12(Robot):
 
         self._cartesian_space_position_diff: dict[str,
                                                   float] = cart_pos_diff_dict
-
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        # logger.debug(f"Sending action to robot: {pos_diff}")
+        logger.debug(f"Sending action to robot: {pos_diff}")
 
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,

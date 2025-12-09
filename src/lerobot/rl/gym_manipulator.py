@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+from loguru import logger
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -22,6 +23,7 @@ from typing import Any
 import gymnasium as gym
 import numpy as np
 import torch
+from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
 from lerobot.cameras import opencv  # noqa: F401
 from lerobot.configs import parser
@@ -578,7 +580,6 @@ def step_env_and_process_transition(
 
     return new_transition
 
-
 def control_loop(
     env: gym.Env,
     env_processor: DataProcessorPipeline[EnvTransition, EnvTransition],
@@ -597,6 +598,7 @@ def control_loop(
      cfg: gym_manipulator configuration
     """
     dt = 1.0 / cfg.env.fps
+    
 
     print(f"Starting control loop at {cfg.env.fps} FPS")
     print("Controls:")

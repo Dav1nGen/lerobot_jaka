@@ -9,6 +9,7 @@ class JakaS12LeaderConfig(TeleoperatorConfig):
     # Arm parameters
     arm_ip: str = "192.168.1.3"
     drag_friction_compensation_gain: tuple = (80, 80, 80, 80, 80, 80)
+    use_gripper: bool = False
 
     # Other parameters
     is_block: bool = False
