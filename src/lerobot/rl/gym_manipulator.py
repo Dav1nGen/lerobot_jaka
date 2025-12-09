@@ -580,8 +580,6 @@ def step_env_and_process_transition(
 
     return new_transition
 
-monitor = FPSMonitor()
-
 def control_loop(
     env: gym.Env,
     env_processor: DataProcessorPipeline[EnvTransition, EnvTransition],
@@ -668,7 +666,6 @@ def control_loop(
     episode_start_time = time.perf_counter()
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
-        monitor.tick("control_loop FPS")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)

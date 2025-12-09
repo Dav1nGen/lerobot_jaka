@@ -34,10 +34,10 @@ class JakaS12Leader(Teleoperator):
         self._is_connected: bool = False
         self._is_running: bool = False
 
+        # self._monitor = FPSMonitor()
+
         # Connect and init robot
         self.connect()
-        
-        self.monitor = FPSMonitor()
 
         # Thread for getting joint position diff
         self._lock = threading.Lock()
@@ -96,7 +96,7 @@ class JakaS12Leader(Teleoperator):
         self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0)
 
         # Enable admittance control
-        # self._robot.enable_admittance_ctrl(1)
+        self._robot.enable_admittance_ctrl(1)
         logger.info(f"Enable_admittance_ctrl open!")
 
         # Init parameters
@@ -209,7 +209,6 @@ class JakaS12Leader(Teleoperator):
     # Update cartesian space position diff in each cycle
     def _get_cartesian_space_position_diff(self) -> None:
         while self._is_running:
-            self.monitor.tick("cartesian_space_position_diff")
             self._last_cart_space_position = self._cart_space_position
 
             # logger.debug(f"Cartesian space position diff before: {self._cart_space_position}")
