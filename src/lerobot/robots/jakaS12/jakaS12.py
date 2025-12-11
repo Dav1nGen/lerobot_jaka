@@ -43,9 +43,6 @@ class JakaS12(Robot):
         # Debug monitor
         # self._monitor = FPSMonitor()
 
-        # Connect to arm & sucker & _cameras
-        self.connect()
-
     def connect(self) -> None:
 
         # Connect to arm
@@ -77,9 +74,9 @@ class JakaS12(Robot):
                                     edg_mode=0)
 
         # Set servo move filter
-        self._robot.servo_move_enable(0)
-        self._robot.servo_speed_foresight(200, 0.4)
-        self._robot.servo_move_use_joint_LPF(0.5)
+        # self._robot.servo_move_enable(0)
+        # self._robot.servo_speed_foresight(200, 0.4)
+        # self._robot.servo_move_use_joint_LPF(0.5)
 
         # Enable servo mode
         self._robot.servo_move_enable(1)
@@ -88,6 +85,7 @@ class JakaS12(Robot):
 
         # Connect to sucker
         self._sucker.connect()
+
         logger.info(
             f"Successfully connected to sucker at {self._sucker_ip}:{self._sucker_port}"
         )
