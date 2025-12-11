@@ -13,7 +13,7 @@
                     "index_or_path": 4,
                     "width": 640,
                     "height": 480,
-                    "fps": 30,
+                    "fps": 60,
                     "color_mode": "rgb"
                 },
                 "wrist": {
@@ -21,7 +21,7 @@
                     "index_or_path": 10,
                     "width": 640,
                     "height": 480,
-                    "fps": 30, 
+                    "fps": 60, 
                     "color_mode": "rgb"
                 }
             }
@@ -38,7 +38,7 @@
         "processor": {
             "control_mode": "keyboard",
             "observation": {
-                "display_cameras": true,
+                "display_cameras": false,
                 "add_joint_velocity_to_observation": false,
                 "add_current_to_observation": false
             },
@@ -71,7 +71,7 @@
             "max_gripper_pos": 30
         },
         "name": "real_robot",
-        "fps": 15
+        "fps": 100
     },
     "dataset": {
         "repo_id": "Dav1nGen/data_1",

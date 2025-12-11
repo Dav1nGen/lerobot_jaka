@@ -37,13 +37,7 @@ class JakaS12Leader(Teleoperator):
         # self._monitor = FPSMonitor()
 
         # Connect and init robot
-        self.connect()
-
-        # Thread for getting joint position diff
-        self._lock = threading.Lock()
-        self._joint_position_diff_thread = threading.Thread(
-            target=self._get_cartesian_space_position_diff, daemon=True)
-        self._joint_position_diff_thread.start()
+        # self.connect()
 
     #################################
     ########Lerobot interface########
@@ -105,6 +99,12 @@ class JakaS12Leader(Teleoperator):
         self._is_connected = True
         self._is_running = True
         logger.info(f"Successfully connected to robot at {self._arm_ip}")
+
+        # Start thread for getting joint position diff
+        self._lock = threading.Lock()
+        self._joint_position_diff_thread = threading.Thread(
+            target=self._get_cartesian_space_position_diff, daemon=True)
+        self._joint_position_diff_thread.start()
 
     # Disconnect to robot
     def disconnect(self) -> None:
@@ -211,11 +211,8 @@ class JakaS12Leader(Teleoperator):
         while self._is_running:
             self._last_cart_space_position = self._cart_space_position
 
-            # logger.debug(f"Cartesian space position diff before: {self._cart_space_position}")
             time.sleep(0.01)
             self._cart_space_position = self._robot.get_tcp_position()[1]
-
-            # logger.debug(f"Cartesian space position diff later: {self._cart_space_position}")
 
             # Calculate cart space diff
             cart_space_position_diff = list(
@@ -225,7 +222,7 @@ class JakaS12Leader(Teleoperator):
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
 
-            # logger.debug(f"Cartesian space position diff: {cart_space_position_diff}")
+            # logger.debug(f"Send position diff: {cart_space_position_diff}")
 
             with self._lock:
                 self._cart_space_position_diff = tuple(
