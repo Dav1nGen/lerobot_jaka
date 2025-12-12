@@ -434,7 +434,7 @@ class InterventionActionProcessorStep(ProcessorStep):
         # Original is_intervention from a separate call, which causes a race condition.
         # is_intervention = info.get(TeleopEvents.IS_INTERVENTION, False)
         
-        # FIX: Re-calculate is_intervention based on the teleop_action we already have.
+        # Dav1nGen FIX: Re-calculate is_intervention based on the teleop_action we already have.
         # This ensures the action and the intervention flag are consistent.
         is_intervention = False
         if teleop_action and isinstance(teleop_action, dict) and 'cart_pos_diff_dict' in teleop_action:
@@ -451,7 +451,7 @@ class InterventionActionProcessorStep(ProcessorStep):
         # Override action if intervention is active
         if is_intervention and teleop_action is not None:
             if isinstance(teleop_action, dict):
-                # FIX: Correctly parse the nested dict from jakaS12_leader
+                # Dav1nGen FIX: Correctly parse the nested dict from jakaS12_leader
                 if 'cart_pos_diff_dict' in teleop_action:
                     action_list = list(teleop_action['cart_pos_diff_dict'].values())
                     if self.use_gripper:
