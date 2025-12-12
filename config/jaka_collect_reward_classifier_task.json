@@ -1,0 +1,63 @@
+{
+  "device": "cuda",
+  "mode": "record",
+  "env": {
+    "name": "real_robot",
+    "task": null,
+    "fps": 60,
+    "processor": {
+      "control_mode": "leader",
+      "reset": {
+        "reset_time_s": 0,
+        "control_time_s": 30.0,
+        "terminate_on_success": true
+      },
+      "gripper": {
+        "use_gripper": false
+      }
+    },
+    "robot": {
+      "type": "jakaS12",
+      "id": "JakaS12",
+      "arm_ip": "192.168.1.5",
+      "sucker_ip": "192.168.1.8",
+      "sucker_port": 502,
+      "coils_address": 8,
+      "cameras": {
+        "head": {
+          "type": "opencv",
+          "index_or_path": 4,
+          "width": 640,
+          "height": 480,
+          "fps": 60,
+          "color_mode": "rgb"
+        },
+        "wrist": {
+          "type": "opencv",
+          "index_or_path": 10,
+          "width": 640,
+          "height": 480,
+          "fps": 60,
+          "color_mode": "rgb"
+        }
+      }
+    },
+    "teleop": {
+      "type": "jakaS12_leader",
+      "arm_ip": "192.168.1.3",
+      "drag_friction_compensation_gain": "(80, 80, 80, 80, 80, 80)",
+      "is_block": false,
+      "joint_speed": 3,
+      "joint_acc": 3,
+      "use_gripper": false
+    }
+  },
+  "dataset": {
+    "repo_id": "Dav1nGen/reward_classifier_data1",
+    "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data1",
+    "task": "jaka_collect_reward_classifier_task",
+    "num_episodes_to_record": 1,
+    "replay_episode": null,
+    "push_to_hub": false
+  }
+}
