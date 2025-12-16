@@ -157,7 +157,6 @@ class RobotEnv(gym.Env):
         self.episode_data = None
 
         self._joint_names = [f"{key}.pos" for key in self.robot.bus.motors]
-        # self._image_keys = self.robot.cameras.keys()
         self._image_keys = self.robot._cameras.keys()  # DavinGen:modify
 
         self.reset_pose = reset_pose
@@ -174,7 +173,6 @@ class RobotEnv(gym.Env):
         """Get current robot observation including joint positions and camera images."""
         obs_dict = self.robot.get_observation()
         raw_joint_joint_position = {f"{name}.pos": obs_dict[f"{name}._joint_position"] for name in self._joint_names}
-        # joint_positions = np.array([raw_joint_joint_position[f"{name}._joint_position"] for name in self._joint_names])
         joint_positions = np.array([raw_joint_joint_position[f"{name}.pos"] for name in self._joint_names])
         
         images = {key: obs_dict[key] for key in self._image_keys}
