@@ -56,7 +56,7 @@
     "repo_id": "Dav1nGen/reward_classifier_data1",
     "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data1",
     "task": "jaka_collect_reward_classifier_task",
-    "num_episodes_to_record": 1,
+    "num_episodes_to_record": 100,
     "replay_episode": null,
     "push_to_hub": false
   }

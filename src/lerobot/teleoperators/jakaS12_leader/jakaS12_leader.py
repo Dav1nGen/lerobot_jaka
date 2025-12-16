@@ -4,12 +4,30 @@ import numpy as np
 import time
 import threading
 import sys
+import os
+from queue import Queue
 
 from .jaka_lib_2_3_0 import jkrc
-# import jkrc
 from ..teleoperator import Teleoperator
 from .config_jakaS12_leader import JakaS12LeaderConfig
 from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
+from ..utils import TeleopEvents
+
+# Keyboard listener
+PYNPUT_AVAILABLE = True
+try:
+    if ("DISPLAY" not in os.environ) and ("linux" in sys.platform):
+        logger.info("No DISPLAY set. Skipping pynput import.")
+        raise ImportError("pynput blocked intentionally due to no display.")
+
+    from pynput import keyboard
+except ImportError:
+    keyboard = None
+    PYNPUT_AVAILABLE = False
+except Exception as e:
+    keyboard = None
+    PYNPUT_AVAILABLE = False
+    logger.info(f"Could not import pynput: {e}")
 
 
 class JakaS12Leader(Teleoperator):
@@ -33,6 +51,10 @@ class JakaS12Leader(Teleoperator):
         # States
         self._is_connected: bool = False
         self._is_running: bool = False
+
+        # Keyboard
+        self.event_queue = Queue()
+        self.listener = None
 
         # self._monitor = FPSMonitor()
 
@@ -100,6 +122,20 @@ class JakaS12Leader(Teleoperator):
         self._is_running = True
         logger.info(f"Successfully connected to robot at {self._arm_ip}")
 
+        # Start keyboard listener
+        if PYNPUT_AVAILABLE:
+            logger.info(
+                "pynput is available - enabling local keyboard listener.")
+            self.listener = keyboard.Listener(
+                on_press=self._on_press,
+                on_release=self._on_release,
+            )
+            self.listener.start()
+        else:
+            logger.info(
+                "pynput not available - skipping local keyboard listener.")
+            self.listener = None
+
         # Start thread for getting joint position diff
         self._lock = threading.Lock()
         self._joint_position_diff_thread = threading.Thread(
@@ -116,6 +152,9 @@ class JakaS12Leader(Teleoperator):
                 self._robot.logout()
             except Exception as e:
                 logger.warning(f"Error during robot logout: {e}")
+
+        if self.listener is not None:
+            self.listener.stop()
 
         self._is_connected = False
         self._is_running = False
@@ -180,20 +219,31 @@ class JakaS12Leader(Teleoperator):
     def configure(self) -> None:
         pass
 
+    # Get keyboard events
     def get_teleop_events(self) -> dict[str, bool]:
-        with self._lock:
-            # A simple heuristic for intervention: if the arm has moved.
-            # Using only translation part for simplicity.
-            pos_diff = np.array(self._cart_space_position_diff[:3])
-            is_intervention = np.linalg.norm(
-                pos_diff) > 1e-5  # Threshold for movement
+        terminate_episode = False
+        success = False
+        rerecord_episode = False
+
+        while not self.event_queue.empty():
+            key = self.event_queue.get_nowait()
+            if key == "s":
+                success = True
+                terminate_episode = True
+            elif key == "r":
+                terminate_episode = True
+                rerecord_episode = True
+            elif key == "q":
+                terminate_episode = True
+                success = False
+
+        is_intervention = False
 
         return {
-            "grip": True,
-            "ungrip": False,
-            "finish_episode": False,
-            "rerecord_episode": False,
-            "is_intervention": is_intervention,
+            TeleopEvents.IS_INTERVENTION: is_intervention,
+            TeleopEvents.TERMINATE_EPISODE: terminate_episode,
+            TeleopEvents.SUCCESS: success,
+            TeleopEvents.RERECORD_EPISODE: rerecord_episode,
         }
 
     #############################
@@ -205,6 +255,15 @@ class JakaS12Leader(Teleoperator):
         self._cart_space_position = self._robot.get_tcp_position()[1]
         self._last_cart_space_position = self._robot.get_tcp_position()[1]
         logger.info(f"Initialize robot parameters {self._arm_ip} successfully")
+
+    def _on_press(self, key):
+        if hasattr(key, "char"):
+            self.event_queue.put(key.char)
+
+    def _on_release(self, key):
+        if key == keyboard.Key.esc:
+            logger.info("ESC pressed, disconnecting.")
+            self.disconnect()
 
     # Update cartesian space position diff in each cycle
     def _get_cartesian_space_position_diff(self) -> None:
