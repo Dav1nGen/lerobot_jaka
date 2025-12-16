@@ -1,9 +1,20 @@
 {
+    "batch_size": 16,
+    "num_workers": 4,
+    "steps": 5000,
+    "log_freq": 10,
+    "eval_freq": 1000,
+    "save_freq": 1000,
+    "save_checkpoint": true,
+    "seed": 2,
+    "resume": false,
+    "output_dir":"/home/joysonrobot/output_dir",
     "dataset": {
         "repo_id": null,
-        "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data1"
+        "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data3"
     },
     "policy": {
+        "repo_id": "data1",
         "type": "reward_classifier",
         "model_name": "helper2424/resnet10",
         "model_type": "cnn",
@@ -33,22 +44,11 @@
             }
         }
     },
-    "batch_size": 16,
-    "num_workers": 4,
-    "steps": 5000,
-    "log_freq": 10,
-    "eval_freq": 1000,
-    "save_freq": 1000,
-    "save_checkpoint": true,
-    "seed": 2,
-    "resume": false,
-    "fps": 60,
-    "number_of_steps_after_success": 10,
     "optimizer": {
         "grad_clip_norm": 10.0
     },
     "wandb": {
-        "enable": true,
+        "enable": false,
         "project": "reward-classifier",
         "disable_artifact": false
     },

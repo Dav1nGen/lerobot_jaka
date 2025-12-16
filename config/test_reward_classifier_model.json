@@ -1,25 +1,5 @@
 {
-  "mode": "record",
-  "device": "cuda",
   "env": {
-    "name": "real_robot",
-    "task": null,
-    "fps": 60,
-    "processor": {
-      "control_mode": "leader",
-      "image_preprocessing": {
-        "resize_size": [128, 128]
-      },
-      "reset": {
-        "reset_time_s": 30,
-        "control_time_s": 30.0,
-        "terminate_on_success": true,
-        "fixed_reset_joint_positions": [-80, 80, -114, 123, 91, 13]
-      },
-      "gripper": {
-        "use_gripper": false
-      }
-    },
     "robot": {
       "type": "jakaS12",
       "id": "JakaS12",
@@ -54,14 +34,26 @@
       "joint_speed": 3,
       "joint_acc": 3,
       "use_gripper": false
+    },
+    "processor": {
+      "reward_classifier": {
+        "pretrained_path": "/home/joysonrobot/output_dir/checkpoints/last/pretrained_model",
+        "success_threshold": 0.7,
+        "success_reward": 1.0
+      },
+      "reset": {
+        "terminate_on_success": true
+      }
     }
   },
+    
   "dataset": {
     "repo_id": null,
-    "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data3",
+    "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data2",
     "task": "jaka_collect_reward_classifier_task",
-    "num_episodes_to_record": 3,
+    "num_episodes_to_record": 5,
     "replay_episode": null,
     "push_to_hub": false
   }
+  
 }
