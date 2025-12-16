@@ -41,8 +41,4 @@ class CameraConfig(draccus.ChoiceRegistry, abc.ABC):  # type: ignore  # TODO: ad
 
     @property
     def type(self) -> str:
-<<<<<<< HEAD
         return str(self.get_choice_name(self.__class__))
-=======
-        return self.get_choice_name(self.__class__)
->>>>>>> dbd6eec2 (fixed)
