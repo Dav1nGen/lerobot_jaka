@@ -1,6 +1,6 @@
 {
-  "device": "cuda",
   "mode": "record",
+  "device": "cuda",
   "env": {
     "name": "real_robot",
     "task": null,
@@ -8,9 +8,10 @@
     "processor": {
       "control_mode": "leader",
       "reset": {
-        "reset_time_s": 0,
+        "reset_time_s": 10,
         "control_time_s": 30.0,
-        "terminate_on_success": true
+        "terminate_on_success": true,
+        "fixed_reset_joint_position": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
       },
       "gripper": {
         "use_gripper": false
@@ -53,10 +54,10 @@
     }
   },
   "dataset": {
-    "repo_id": "Dav1nGen/reward_classifier_data1",
+    "repo_id": null,
     "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data1",
     "task": "jaka_collect_reward_classifier_task",
-    "num_episodes_to_record": 100,
+    "num_episodes_to_record": 20,
     "replay_episode": null,
     "push_to_hub": false
   }
