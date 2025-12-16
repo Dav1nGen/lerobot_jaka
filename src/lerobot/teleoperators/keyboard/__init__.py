@@ -18,8 +18,9 @@ from .configuration_keyboard import (
     KeyboardEndEffectorTeleopConfig,
     KeyboardRoverTeleopConfig,
     KeyboardTeleopConfig,
+    KeyboardSuckerTeleopConfig
 )
-from .teleop_keyboard import KeyboardEndEffectorTeleop, KeyboardRoverTeleop, KeyboardTeleop
+from .teleop_keyboard import KeyboardEndEffectorTeleop, KeyboardRoverTeleop, KeyboardTeleop,KeyboardSuckerTeleop
 from ..keyboard.modbus_tcp import ModbusTCP
 
 __all__ = [

@@ -275,6 +275,7 @@ def record_loop(
                 for t in teleop
                 if isinstance(
                     t,
+<<<<<<< HEAD
                  (
                         so100_leader.SO100Leader
                         | so101_leader.SO101Leader
@@ -282,6 +283,9 @@ def record_loop(
                         | omx_leader.OmxLeader
                         | jakaS12_leader.JakaS12Leader
                     ),
+=======
+                    (so100_leader.SO100Leader | so101_leader.SO101Leader | koch_leader.KochLeader | jakaS12_leader.JakaS12Leader),
+>>>>>>> feature/add_keyboard_action_to_JakaS12_leader
                 )
             ),
             None,

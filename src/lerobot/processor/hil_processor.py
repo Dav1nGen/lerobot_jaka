@@ -19,6 +19,7 @@ import math
 import time
 from dataclasses import dataclass
 from typing import Any, Protocol, TypeVar, runtime_checkable
+from loguru import logger
 
 import numpy as np
 import torch
@@ -444,6 +445,7 @@ class InterventionActionProcessorStep(ProcessorStep):
 
         terminate_episode = info.get(TeleopEvents.TERMINATE_EPISODE, False)
         success = info.get(TeleopEvents.SUCCESS, False)
+        logger.debug(f"success state: {success}")
         rerecord_episode = info.get(TeleopEvents.RERECORD_EPISODE, False)
 
         new_transition = transition.copy()
