@@ -666,7 +666,7 @@ def control_loop(
     frame_lock=threading.Lock() # lock for add_frame
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
-        logger.info(f"Start episode {episode_idx}!!!")
+        logger.info(f"Record episode: {episode_idx}")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)

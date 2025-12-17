@@ -8,13 +8,23 @@
     "processor": {
       "control_mode": "leader",
       "image_preprocessing": {
-        "resize_size": [128, 128]
+        "resize_size": [
+          128,
+          128
+        ]
       },
       "reset": {
         "reset_time_s": 30,
         "control_time_s": 30.0,
         "terminate_on_success": true,
-        "fixed_reset_joint_positions": [-80, 80, -114, 123, 91, 13]
+        "fixed_reset_joint_positions": [
+          -80,
+          80,
+          -114,
+          123,
+          91,
+          13
+        ]
       },
       "gripper": {
         "use_gripper": false
@@ -49,7 +59,14 @@
     "teleop": {
       "type": "jakaS12_leader",
       "arm_ip": "192.168.1.3",
-      "drag_friction_compensation_gain": [80, 80, 80, 80, 80, 80],
+      "drag_friction_compensation_gain": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
       "is_block": false,
       "joint_speed": 3,
       "joint_acc": 3,
