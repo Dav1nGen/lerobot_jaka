@@ -28,6 +28,8 @@ class JakaS12(Robot):
         self._arm_ip: str = self._config.arm_ip
         self._is_connected: bool = False
         self._joint_position: tuple = (0, 0, 0, 0, 0, 0)
+        self._cart_position: tuple = (0, 0, 0, 0, 0, 0)
+        self._EE_torque: tuple = (0, 0, 0, 0, 0, 0)
         self._cartesian_space_position_diff: dict[str, float] = {}
         self._robot = jkrc.RC(self._arm_ip)
         self.bus = None
@@ -136,6 +138,36 @@ class JakaS12(Robot):
         return feature
 
     @property
+    def _cart_position_feature(self) -> dict[str, float]:
+        cart_position_feature = {}
+        self._cart_positon = self._robot.get_tcp_position()[1]
+        cart_position_feature = {
+            "x": self._cart_positon[0],
+            "y": self._cart_positon[1],
+            "z": self._cart_positon[2],
+            "rx": self._cart_positon[3],
+            "ry": self._cart_positon[4],
+            "rz": self._cart_positon[5],
+        }
+
+        return cart_position_feature
+
+    @property
+    def _EE_torque_feature(self) -> dict[str.float]:
+        EE_torque_feature = {}
+        self._EE_torque = self._robot.get_robot_status()[1][21]
+        EE_torque_feature = {
+            "x": self._EE_torque[0],
+            "y": self._EE_torque[1],
+            "z": self._EE_torque[2],
+            "rx": self._EE_torque[3],
+            "ry": self._EE_torque[4],
+            "rz": self._EE_torque[5],
+        }
+
+        return EE_torque_feature
+
+    @property
     def _cameras_feature(self) -> dict[str, dict]:
         camera_features = {}
         for cam_key, cam in self._cameras.items():
@@ -155,6 +187,8 @@ class JakaS12(Robot):
     def observation_features(self) -> dict[str, Any]:
         features = {
             **self._joint_feature,
+            **self._cart_position_feature,
+            **self._EE_torque_feature,
             **self._sucker_feature,
             **self._cameras_feature
         }
@@ -164,6 +198,13 @@ class JakaS12(Robot):
 
         # Joint feature
         joint_feature: dict[str, float] = self._joint_feature
+
+        # Cartesian space position feature
+        cartesian_space_position_feature: dict[
+            str, float] = self._cart_position_feature
+
+        # EE torque feature
+        EE_torque_feature: dict[str, float] = self._EE_torque_feature
 
         # Sucker feature
         sucker_feature: dict[str, bool] = self._sucker_feature
@@ -180,6 +221,8 @@ class JakaS12(Robot):
 
         observation_dict = {
             **joint_feature,
+            **cartesian_space_position_feature,
+            **EE_torque_feature,
             **sucker_feature,
             **camera_feature
         }
