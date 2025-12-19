@@ -11,8 +11,6 @@ from .jakaS12_bus import JakaS12Bus
 from lerobot.cameras.utils import make_cameras_from_configs
 from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 
-# TODO: Dav1nGen: 1. Add robot end effector torque
-
 
 class JakaS12(Robot):
 
@@ -153,7 +151,7 @@ class JakaS12(Robot):
         return cart_position_feature
 
     @property
-    def _EE_torque_feature(self) -> dict[str.float]:
+    def _EE_torque_feature(self) -> dict[str, float]:
         EE_torque_feature = {}
         self._EE_torque = self._robot.get_robot_status()[1][21]
         EE_torque_feature = {
