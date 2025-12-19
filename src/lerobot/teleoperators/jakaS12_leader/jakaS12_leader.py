@@ -233,6 +233,9 @@ class JakaS12Leader(Teleoperator):
             if key == "s":
                 success = True
                 terminate_episode = True
+            elif key == 'f':
+                success = False
+                terminate_episode = True
             elif key == "r":
                 terminate_episode = True
                 rerecord_episode = True
@@ -240,6 +243,7 @@ class JakaS12Leader(Teleoperator):
                 terminate_episode = True
                 success = False
 
+        # Is intervention always False???
         is_intervention = False
 
         return {
