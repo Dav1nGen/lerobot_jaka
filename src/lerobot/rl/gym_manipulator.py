@@ -976,43 +976,41 @@ def control_loop_for_binary_classifier(
                     [discrete_penalty], dtype=np.float32)
 
             # Only record the frame when key is pressed
-            if terminated or truncated:
-                if dataset is not None:
+            if dataset is not None:
+                if terminated or truncated:
                     with frame_lock:
                         frame["task"] = cfg.dataset.task
                         dataset.add_frame(frame)
+                        episode_idx += 1
 
         episode_step += 1
 
-        # Handle episode termination
-        if terminated or truncated:
-            episode_time = time.perf_counter() - episode_start_time
-            logging.info(
-                f"Episode ended after {episode_step} steps in {episode_time:.1f}s with reward {transition[TransitionKey.REWARD]}"
-            )
-            episode_step = 0
-            episode_idx += 1
-
-            if dataset is not None:
-                if transition[TransitionKey.INFO].get(
-                        TeleopEvents.RERECORD_EPISODE, False):
-                    logging.info(f"Re-recording episode {episode_idx}")
-                    dataset.clear_episode_buffer()
-                    episode_idx -= 1
-                else:
-                    logging.info(f"Saving episode {episode_idx}")
-                    dataset.save_episode()
-
-            # Reset for new episode
-            obs, info = env.reset()
-            env_processor.reset()
-            action_processor.reset()
-
-            transition = create_transition(observation=obs, info=info)
-            transition = env_processor(transition)
-
         # Maintain fps timing
         precise_sleep(dt - (time.perf_counter() - step_start_time))
+
+    # Handle episode termination
+    episode_time = time.perf_counter() - episode_start_time
+    logging.info(
+        f"Episode ended after {episode_step} steps in {episode_time:.1f}s with reward {transition[TransitionKey.REWARD]}"
+    )
+
+    if dataset is not None:
+        if transition[TransitionKey.INFO].get(TeleopEvents.RERECORD_EPISODE,
+                                              False):
+            logging.info(f"Re-recording episode {episode_idx}")
+            dataset.clear_episode_buffer()
+            episode_idx -= 1
+        else:
+            logging.info(f"Saving episode {episode_idx}")
+            dataset.save_episode()
+
+    # Reset for new episode
+    obs, info = env.reset()
+    env_processor.reset()
+    action_processor.reset()
+
+    transition = create_transition(observation=obs, info=info)
+    transition = env_processor(transition)
 
     if dataset is not None and cfg.dataset.push_to_hub:
         logging.info("Pushing dataset to hub")
