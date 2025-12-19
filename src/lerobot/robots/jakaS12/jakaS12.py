@@ -154,6 +154,7 @@ class JakaS12(Robot):
     def _EE_torque_feature(self) -> dict[str, float]:
         EE_torque_feature = {}
         self._EE_torque = self._robot.get_robot_status()[1][21]
+        # TODO(Dav1nGen): self._EE_torque = self._robot.get_robot_status()[1][21][6]??
         EE_torque_feature = {
             "x": self._EE_torque[0],
             "y": self._EE_torque[1],
