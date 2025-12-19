@@ -150,21 +150,22 @@ class JakaS12(Robot):
 
         return cart_position_feature
 
-    @property
-    def _EE_torque_feature(self) -> dict[str, float]:
-        EE_torque_feature = {}
-        self._EE_torque = self._robot.get_robot_status()[1][21]
-        # TODO(Dav1nGen): self._EE_torque = self._robot.get_robot_status()[1][21][6]??
-        EE_torque_feature = {
-            "x": self._EE_torque[0],
-            "y": self._EE_torque[1],
-            "z": self._EE_torque[2],
-            "rx": self._EE_torque[3],
-            "ry": self._EE_torque[4],
-            "rz": self._EE_torque[5],
-        }
+    # TODO(Dav1nGen): The low-frequency issue needs to be fixed.
+    # @property
+    # def _EE_torque_feature(self) -> dict[str, float]:
+    #     EE_torque_feature = {}
+    #     self._EE_torque = self._robot.get_robot_status()[1][21]
+    #     # TODO(Dav1nGen): self._EE_torque = self._robot.get_robot_status()[1][21][6]??
+    #     EE_torque_feature = {
+    #         "x": self._EE_torque[0],
+    #         "y": self._EE_torque[1],
+    #         "z": self._EE_torque[2],
+    #         "rx": self._EE_torque[3],
+    #         "ry": self._EE_torque[4],
+    #         "rz": self._EE_torque[5],
+    #     }
 
-        return EE_torque_feature
+    #     return EE_torque_feature
 
     @property
     def _cameras_feature(self) -> dict[str, dict]:
@@ -187,7 +188,7 @@ class JakaS12(Robot):
         features = {
             **self._joint_feature,
             **self._cart_position_feature,
-            **self._EE_torque_feature,
+            # **self._EE_torque_feature,
             **self._sucker_feature,
             **self._cameras_feature
         }
@@ -203,7 +204,7 @@ class JakaS12(Robot):
             str, float] = self._cart_position_feature
 
         # EE torque feature
-        EE_torque_feature: dict[str, float] = self._EE_torque_feature
+        # EE_torque_feature: dict[str, float] = self._EE_torque_feature
 
         # Sucker feature
         sucker_feature: dict[str, bool] = self._sucker_feature
@@ -213,15 +214,12 @@ class JakaS12(Robot):
 
         # Capture images from _cameras
         for cam_key, cam in self._cameras.items():
-            # start = time.perf_counter()
             camera_feature[cam_key] = cam.async_read()
-            # dt_ms = (time.perf_counter() - start) * 1e3
-            # logger.debug(f"{self} read {cam_key}: {dt_ms:.1f}ms")
 
         observation_dict = {
             **joint_feature,
             **cartesian_space_position_feature,
-            **EE_torque_feature,
+            # **EE_torque_feature,
             **sucker_feature,
             **camera_feature
         }
