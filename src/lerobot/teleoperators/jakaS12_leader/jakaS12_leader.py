@@ -1,20 +1,18 @@
-from loguru import logger
-from typing import Any
-import numpy as np
-import time
-import threading
-import sys
-
-from .jaka_lib_2_3_0 import jkrc
-from ..teleoperator import Teleoperator
-from .config_jakaS12_leader import JakaS12LeaderConfig
-from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
 import os
+import sys
+import threading
+import time
 from queue import Queue
-from ..teleoperator import Teleoperator
-from .config_jakaS12_leader import JakaS12LeaderConfig
+from typing import Any
+
+import numpy as np
 from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
+from loguru import logger
+
+from ..teleoperator import Teleoperator
 from ..utils import TeleopEvents
+from .config_jakaS12_leader import JakaS12LeaderConfig
+from .jaka_lib_2_3_0 import jkrc
 
 # Keyboard listener
 PYNPUT_AVAILABLE = True
@@ -58,11 +56,6 @@ class JakaS12Leader(Teleoperator):
         # Keyboard
         self.event_queue = Queue()
         self.listener = None
-
-        # self._monitor = FPSMonitor()
-
-        # Connect and init robot
-        # self.connect()
 
     #################################
     ########Lerobot interface########
@@ -227,6 +220,7 @@ class JakaS12Leader(Teleoperator):
         terminate_episode = False
         success = False
         rerecord_episode = False
+        is_intervention = False  # Is intervention always False???
 
         while not self.event_queue.empty():
             key = self.event_queue.get_nowait()
@@ -242,9 +236,6 @@ class JakaS12Leader(Teleoperator):
             elif key == "q":
                 terminate_episode = True
                 success = False
-
-        # Is intervention always False???
-        is_intervention = False
 
         return {
             TeleopEvents.IS_INTERVENTION: is_intervention,
@@ -287,8 +278,6 @@ class JakaS12Leader(Teleoperator):
 
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
-
-            # logger.debug(f"Send position diff: {cart_space_position_diff}")
 
             with self._lock:
                 self._cart_space_position_diff = tuple(

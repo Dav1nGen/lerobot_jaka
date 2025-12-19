@@ -415,7 +415,10 @@ class KeyboardRoverTeleop(KeyboardTeleop):
         angular_velocity = 0.0
 
         # Check which keys are currently pressed (not released)
-        active_keys = {key for key, is_pressed in self.current_pressed.items() if is_pressed}
+        active_keys = {
+            key
+            for key, is_pressed in self.current_pressed.items() if is_pressed
+        }
 
         # Linear movement (W/S) - these take priority
         if "w" in active_keys:
@@ -453,11 +456,12 @@ class KeyboardRoverTeleop(KeyboardTeleop):
             )
         if "-" in active_keys:
             self.current_linear_speed = max(
-                self.config.min_linear_speed, self.current_linear_speed - self.config.speed_increment
-            )
+                self.config.min_linear_speed,
+                self.current_linear_speed - self.config.speed_increment)
             self.current_angular_speed = max(
                 self.config.min_angular_speed,
-                self.current_angular_speed - self.config.speed_increment * self.config.angular_speed_ratio,
+                self.current_angular_speed -
+                self.config.speed_increment * self.config.angular_speed_ratio,
             )
             logging.info(
                 f"Speed decreased: linear={self.current_linear_speed:.2f}, angular={self.current_angular_speed:.2f}"
@@ -469,6 +473,8 @@ class KeyboardRoverTeleop(KeyboardTeleop):
             "linear.vel": linear_velocity,
             "angular.vel": angular_velocity,
         }
+
+
 class KeyboardSuckerTeleop(KeyboardTeleop):
     config_class = KeyboardSuckerTeleopConfig
     name = "T002_keyboard"
@@ -553,7 +559,7 @@ class KeyboardSuckerTeleop(KeyboardTeleop):
         terminate_episode = False
         success = False
         rerecord_episode = False
-        
+
         if 's' in self.current_pressed and self.current_pressed['s']:
             success = True
             terminate_episode = True

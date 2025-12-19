@@ -1,6 +1,7 @@
-from ..robot_bus import RobotBusBase
 from typing import Any
 from numpy import float64
+
+from ..robot_bus import RobotBusBase
 from ..robot import Robot
 
 
@@ -26,7 +27,7 @@ class JakaS12Bus(RobotBusBase):
 
         for i, key in enumerate(self.motors.keys()):
             self.motors[key] = float(joint_positions[i])
-            
+
         return self.motors
 
     def sync_write(self, dict_name: str, joint_position: dict[str, float64]):

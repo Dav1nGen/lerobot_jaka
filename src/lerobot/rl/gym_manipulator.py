@@ -850,7 +850,6 @@ def control_loop_for_binary_classifier(
      cfg: gym_manipulator configuration
     """
     dt = 1.0 / cfg.env.fps
-    
 
     print(f"Starting control loop at {cfg.env.fps} FPS")
     print("Controls:")
@@ -860,14 +859,17 @@ def control_loop_for_binary_classifier(
 
     # Reset environment and processors
     obs, info = env.reset()
-    complementary_data = (
-        {"raw_joint_positions": info.pop("raw_joint_positions")} if "raw_joint_positions" in info else {}
-    )
+    complementary_data = ({
+        "raw_joint_positions":
+        info.pop("raw_joint_positions")
+    } if "raw_joint_positions" in info else {})
     env_processor.reset()
     action_processor.reset()
 
     # Process initial observation
-    transition = create_transition(observation=obs, info=info, complementary_data=complementary_data)
+    transition = create_transition(observation=obs,
+                                   info=info,
+                                   complementary_data=complementary_data)
     transition = env_processor(data=transition)
 
     # Determine if gripper is used
@@ -878,13 +880,21 @@ def control_loop_for_binary_classifier(
         action_features = teleop_device.action_features
         features = {
             ACTION: action_features,
-            REWARD: {"dtype": "float32", "shape": (1,), "names": None},
-            DONE: {"dtype": "bool", "shape": (1,), "names": None},
+            REWARD: {
+                "dtype": "float32",
+                "shape": (1, ),
+                "names": None
+            },
+            DONE: {
+                "dtype": "bool",
+                "shape": (1, ),
+                "names": None
+            },
         }
         if use_gripper:
             features["complementary_info.discrete_penalty"] = {
                 "dtype": "float32",
-                "shape": (1,),
+                "shape": (1, ),
                 "names": ["discrete_penalty"],
             }
 
@@ -916,14 +926,15 @@ def control_loop_for_binary_classifier(
     episode_idx = 0
     episode_step = 0
     episode_start_time = time.perf_counter()
-    frame_lock=threading.Lock() # lock for add_frame
+    frame_lock = threading.Lock()  # lock for add_frame
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
         logger.info(f"Start episode {episode_idx}!!!")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)
-        neutral_action = torch.zeros(env.action_space.shape, dtype=torch.float32)
+        neutral_action = torch.zeros(env.action_space.shape,
+                                     dtype=torch.float32)
         if use_gripper:
             neutral_action[-1] = 1.0  # Gripper stay
 
@@ -945,18 +956,24 @@ def control_loop_for_binary_classifier(
                 if isinstance(v, torch.Tensor)
             }
             # Use teleop_action if available, otherwise use the action from the transition
-            action_to_record = transition[TransitionKey.COMPLEMENTARY_DATA].get(
-                "teleop_action", transition[TransitionKey.ACTION]
-            )
+            action_to_record = transition[
+                TransitionKey.COMPLEMENTARY_DATA].get(
+                    "teleop_action", transition[TransitionKey.ACTION])
             frame = {
                 **observations,
-                ACTION: action_to_record.cpu(),
-                REWARD: np.array([transition[TransitionKey.REWARD]], dtype=np.float32),
-                DONE: np.array([terminated or truncated], dtype=bool),
+                ACTION:
+                action_to_record.cpu(),
+                REWARD:
+                np.array([transition[TransitionKey.REWARD]], dtype=np.float32),
+                DONE:
+                np.array([terminated or truncated], dtype=bool),
             }
             if use_gripper:
-                discrete_penalty = transition[TransitionKey.COMPLEMENTARY_DATA].get("discrete_penalty", 0.0)
-                frame["complementary_info.discrete_penalty"] = np.array([discrete_penalty], dtype=np.float32)
+                discrete_penalty = transition[
+                    TransitionKey.COMPLEMENTARY_DATA].get(
+                        "discrete_penalty", 0.0)
+                frame["complementary_info.discrete_penalty"] = np.array(
+                    [discrete_penalty], dtype=np.float32)
 
             # Only record the frame when key is pressed
             if terminated or truncated:
@@ -977,7 +994,8 @@ def control_loop_for_binary_classifier(
             episode_idx += 1
 
             if dataset is not None:
-                if transition[TransitionKey.INFO].get(TeleopEvents.RERECORD_EPISODE, False):
+                if transition[TransitionKey.INFO].get(
+                        TeleopEvents.RERECORD_EPISODE, False):
                     logging.info(f"Re-recording episode {episode_idx}")
                     dataset.clear_episode_buffer()
                     episode_idx -= 1
@@ -999,8 +1017,7 @@ def control_loop_for_binary_classifier(
     if dataset is not None and cfg.dataset.push_to_hub:
         logging.info("Pushing dataset to hub")
         dataset.push_to_hub()
-    
-    
+
 
 @parser.wrap()
 def main(cfg: GymManipulatorConfig) -> None:
@@ -1017,8 +1034,9 @@ def main(cfg: GymManipulatorConfig) -> None:
     if cfg.mode == "replay":
         replay_trajectory(env, action_processor, cfg)
         exit()
-        
-    control_loop_for_binary_classifier(env, env_processor, action_processor, teleop_device, cfg)
+
+    control_loop_for_binary_classifier(env, env_processor, action_processor,
+                                       teleop_device, cfg)
 
 
 if __name__ == "__main__":

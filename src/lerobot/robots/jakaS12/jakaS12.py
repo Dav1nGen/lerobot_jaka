@@ -1,15 +1,17 @@
-from loguru import logger
 import sys
-from typing import Any
-import time
 import threading
-from .jaka_lib_2_3_0 import jkrc
-from ..robot import Robot
-from .modbus_tcp import ModbusTCP
-from .config_jakaS12 import JakaS12Config
-from .jakaS12_bus import JakaS12Bus
+import time
+from typing import Any
+
 from lerobot.cameras.utils import make_cameras_from_configs
 from lerobot.Dav1nGen_utils.fps_monitor import FPSMonitor
+from loguru import logger
+
+from ..robot import Robot
+from .config_jakaS12 import JakaS12Config
+from .jaka_lib_2_3_0 import jkrc
+from .jakaS12_bus import JakaS12Bus
+from .modbus_tcp import ModbusTCP
 
 
 class JakaS12(Robot):
@@ -39,9 +41,6 @@ class JakaS12(Robot):
         self._sucker: ModbusTCP = ModbusTCP(ip=self._sucker_ip,
                                             port=self._sucker_port)
         self._sucker_state: bool = False
-
-        # Debug monitor
-        # self._monitor = FPSMonitor()
 
     def connect(self) -> None:
 
@@ -247,8 +246,6 @@ class JakaS12(Robot):
         self._cartesian_space_position_diff: dict[str,
                                                   float] = cart_pos_diff_dict
         pos_diff = tuple(self._cartesian_space_position_diff.values())
-
-        # logger.debug(f"Sending action to robot: {pos_diff}")
 
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,

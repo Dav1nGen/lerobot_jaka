@@ -1,5 +1,5 @@
-from pymodbus.client import ModbusTcpClient
 from loguru import logger
+from pymodbus.client import ModbusTcpClient
 
 
 class ModbusTCP:
@@ -52,5 +52,4 @@ class ModbusTCP:
             raise IOError(f"Failed to read coil {coil_address}")
         else:
             coil_status = result.bits[0]
-            # logger.info(f"Read coil {coil_address} status: {coil_status}")
             return coil_status
