@@ -1020,6 +1020,14 @@ def control_loop_for_binary_classifier(
 @parser.wrap()
 def main(cfg: GymManipulatorConfig) -> None:
     """Main entry point for gym manipulator script."""
+
+    #####################################################################
+    ##                       select record mode                        ##
+    ## RECORD_MODE = 0: record binary classifier data collection mode  ##
+    ## RECORD_MODE = 1: record imitation learning data collection mode ##
+    #####################################################################
+    RECORD_MODE = 0
+
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,
                                                       cfg.env, cfg.device)
@@ -1032,9 +1040,14 @@ def main(cfg: GymManipulatorConfig) -> None:
     if cfg.mode == "replay":
         replay_trajectory(env, action_processor, cfg)
         exit()
+        
+    if RECORD_MODE == 0:
+        control_loop_for_binary_classifier(env, env_processor,
+                                           action_processor, teleop_device,
+                                           cfg)
 
-    control_loop_for_binary_classifier(env, env_processor, action_processor,
-                                       teleop_device, cfg)
+    if RECORD_MODE == 1:
+        control_loop(env, env_processor, action_processor, teleop_device, cfg)
 
 
 if __name__ == "__main__":
