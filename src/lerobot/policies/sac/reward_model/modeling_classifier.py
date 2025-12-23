@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+from loguru import logger
 
 import torch
 from torch import Tensor, nn
@@ -268,16 +269,19 @@ class Classifier(PreTrainedPolicy):
 
     def predict_reward(self, batch, threshold=0.5):
         """Eval method. Returns predicted reward with the decision threshold as argument."""
+        # Dav1nGen: Modify
         # Check for both OBS_IMAGE and OBS_IMAGES prefixes
-        batch = self.normalize_inputs(batch)
-        batch = self.normalize_targets(batch)
+        # batch = self.normalize_inputs(batch)
+        # batch = self.normalize_targets(batch)
 
         # Extract images from batch dict
         images = [batch[key] for key in self.config.input_features if key.startswith(OBS_IMAGE)]
 
         if self.config.num_classes == 2:
             probs = self.predict(images).probabilities
-            logging.debug(f"Predicted reward images: {probs}")
+            # logging.debug(f"Predicted reward images: {probs}")
+            result = (probs > threshold).float()
+            logger.debug(f"{result}")
             return (probs > threshold).float()
         else:
             return torch.argmax(self.predict(images).probabilities, dim=1)

@@ -14,4 +14,4 @@ from lerobot.robots.jakaS12.modbus_tcp import ModbusTCP
 modbus = ModbusTCP()
 
 modbus.connect()
-modbus.write(8,1)
+modbus.write(8,0)

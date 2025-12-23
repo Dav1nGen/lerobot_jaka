@@ -715,7 +715,7 @@ def control_loop(
     frame_lock = threading.Lock()  # lock for add_frame
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
-        logger.info(f"Record episode: {episode_idx}")
+        # logger.info(f"Record episode: {episode_idx}")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)
@@ -1026,7 +1026,7 @@ def main(cfg: GymManipulatorConfig) -> None:
     ## RECORD_MODE = 0: record binary classifier data collection mode  ##
     ## RECORD_MODE = 1: record imitation learning data collection mode ##
     #####################################################################
-    RECORD_MODE = 0
+    RECORD_MODE = 1
 
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,
