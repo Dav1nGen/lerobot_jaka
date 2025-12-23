@@ -928,9 +928,8 @@ def control_loop_for_binary_classifier(
     frame_num_per_episode = 100  # target number of frames per episode to collect
     episode_start_time = time.perf_counter()
     frame_lock = threading.Lock()  # lock for add_frame
-
     while episode_idx < cfg.dataset.num_episodes_to_record:
-
+        
         while episode_step < frame_num_per_episode:
             logger.info(
                 f"Episode num: {episode_idx}, episode step: {episode_step}")
@@ -1032,7 +1031,7 @@ def main(cfg: GymManipulatorConfig) -> None:
     ## RECORD_MODE = 0: record binary classifier data collection mode  ##
     ## RECORD_MODE = 1: record imitation learning data collection mode ##
     #####################################################################
-    RECORD_MODE = 1
+    RECORD_MODE = 0
 
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,
