@@ -8,6 +8,20 @@
     "processor": {
       "control_mode": "leader",
       "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.head": [
+            130,
+            210,
+            50,
+            80
+          ],
+          "observation.images.wrist": [
+            162,
+            477,
+            41,
+            79
+          ]
+        },
         "resize_size": [
           128,
           128
@@ -75,7 +89,7 @@
   },
   "dataset": {
     "repo_id": null,
-    "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data3",
+    "root": "/home/joysonrobot/lerobot_dataset/reward_classifier_data_test",
     "task": "jaka_collect_reward_classifier_task",
     "num_episodes_to_record": 3,
     "replay_episode": null,

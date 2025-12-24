@@ -931,8 +931,8 @@ def control_loop_for_binary_classifier(
     while episode_idx < cfg.dataset.num_episodes_to_record:
         
         while episode_step < frame_num_per_episode:
-            logger.info(
-                f"Episode num: {episode_idx}, episode step: {episode_step}")
+            # logger.info(
+            #     f"Episode num: {episode_idx}, episode step: {episode_step}")
             step_start_time = time.perf_counter()
 
             # Create a neutral action (no movement)

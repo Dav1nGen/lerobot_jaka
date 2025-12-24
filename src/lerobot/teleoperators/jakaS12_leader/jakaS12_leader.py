@@ -279,6 +279,7 @@ class JakaS12Leader(Teleoperator):
             for i in range(3, 6):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
 
+            # logger.debug(f"position diff : {cart_space_position_diff}")
             with self._lock:
                 self._cart_space_position_diff = tuple(
                     cart_space_position_diff)
