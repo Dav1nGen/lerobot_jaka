@@ -1,17 +1,17 @@
 {
     "batch_size": 128,
     "num_workers": 4,
-    "steps": 20000,
+    "steps": 120,
     "log_freq": 10,
     "eval_freq": 1000,
     "save_freq": 1000,
     "save_checkpoint": true,
     "seed": 2,
     "resume": false,
-    "output_dir": "/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/binary_classifier_data/out_put/reward_classifier_2025_12_22_data_3000_20000step_output",
+    "output_dir": "/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/binary_classifier_data/out_put/reward_classifier_2025_12_24_data2_1000_120step_output",
     "dataset": {
         "repo_id": null,
-        "root": "/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/binary_classifier_data/reward_classifier_2025_12_22_data_3000"
+        "root": "/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/binary_classifier_data/reward_classifier_2025_12_24_data2_1000"
     },
     "policy": {
         "repo_id": "null",
@@ -49,7 +49,7 @@
         "grad_clip_norm": 10.0
     },
     "wandb": {
-        "enable": false,
+        "enable": true,
         "project": "reward-classifier",
         "disable_artifact": false
     },
