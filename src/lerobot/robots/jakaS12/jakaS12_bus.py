@@ -32,4 +32,5 @@ class JakaS12Bus(RobotBusBase):
 
     def sync_write(self, dict_name: str, joint_position: dict[str, float64]):
         positions = [joint_position[key] for key in self.motors.keys()]
-        self._robot.servo_j(tuple(positions), 1)
+        # self._robot.servo_j(tuple(positions), 1)
+        self._robot.joint_move(tuple(positions), 0, True, 0.1)
