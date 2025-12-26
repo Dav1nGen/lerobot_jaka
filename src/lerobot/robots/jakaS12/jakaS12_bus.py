@@ -1,5 +1,7 @@
 from typing import Any
 from numpy import float64
+from loguru import logger
+import time
 
 from ..robot_bus import RobotBusBase
 from ..robot import Robot
@@ -31,6 +33,18 @@ class JakaS12Bus(RobotBusBase):
         return self.motors
 
     def sync_write(self, dict_name: str, joint_position: dict[str, float64]):
-        positions = [joint_position[key] for key in self.motors.keys()]
-        # self._robot.servo_j(tuple(positions), 1)
-        self._robot.joint_move(tuple(positions), 0, True, 0.1)
+        position = tuple(joint_position.values())
+
+        logger.debug(f"reset joint position to {position}")
+        # self._robot.edg_servo_j(tuple(position),
+        #                         move_mode=1,
+        #                         step_num=100,
+        #                         robot_index=0)
+        
+        self._robot.edg_servo_j(joint_pos=position,
+                  move_mode=1,
+                  step_num=100000,
+                  robot_index=0)
+        # result = self._robot.joint_move(position, 0, True, 1)
+        
+        

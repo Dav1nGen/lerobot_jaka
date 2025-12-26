@@ -107,17 +107,25 @@ class GymManipulatorConfig:
 def reset_follower_position(robot_arm: Robot,
                             target_position: np.ndarray) -> None:
     """Reset robot arm to target position using smooth trajectory."""
-    current_position_dict = robot_arm.bus.sync_read("Present_Position")
-    current_position = np.array(
-        [current_position_dict[name] for name in current_position_dict],
-        dtype=np.float32)
-    trajectory = torch.from_numpy(
-        np.linspace(current_position, target_position,
-                    50))  # NOTE: 30 is just an arbitrary number
-    for pose in trajectory:
-        action_dict = dict(zip(current_position_dict, pose, strict=False))
-        robot_arm.bus.sync_write("Goal_Position", action_dict)
-        precise_sleep(0.015)
+
+    if (robot_arm.name == "jakaS12"):
+        target_joint_dict_keys = [
+            "joint1", "joint2", "joint3", "joint4", "joint5", "joint6"
+        ]
+        target_joint_dict = dict(zip(target_joint_dict_keys,target_position))
+        robot_arm.bus.sync_write("Goal_Position", target_joint_dict)
+    else:
+        current_position_dict = robot_arm.bus.sync_read("Present_Position")
+        current_position = np.array(
+            [current_position_dict[name] for name in current_position_dict],
+            dtype=np.float32)
+        trajectory = torch.from_numpy(
+            np.linspace(current_position, target_position,
+                        50))  # NOTE: 30 is just an arbitrary number
+        for pose in trajectory:
+            action_dict = dict(zip(current_position_dict, pose, strict=False))
+            robot_arm.bus.sync_write("Goal_Position", action_dict)
+            precise_sleep(0.015)
 
 
 class RobotEnv(gym.Env):
@@ -715,7 +723,7 @@ def control_loop(
     frame_lock = threading.Lock()  # lock for add_frame
 
     while episode_idx < cfg.dataset.num_episodes_to_record:
-        # logger.info(f"Record episode: {episode_idx}")
+        logger.info(f"Episode num: {episode_idx}")
         step_start_time = time.perf_counter()
 
         # Create a neutral action (no movement)
@@ -768,10 +776,11 @@ def control_loop(
 
         episode_step += 1
 
+        logger.debug(f"terminated state:{terminated}")
         # Handle episode termination
         if terminated or truncated:
             episode_time = time.perf_counter() - episode_start_time
-            logging.info(
+            logger.info(
                 f"Episode ended after {episode_step} steps in {episode_time:.1f}s with reward {transition[TransitionKey.REWARD]}"
             )
             episode_step = 0
@@ -780,7 +789,7 @@ def control_loop(
             if dataset is not None:
                 if transition[TransitionKey.INFO].get(
                         TeleopEvents.RERECORD_EPISODE, False):
-                    logging.info(f"Re-recording episode {episode_idx}")
+                    logger.info(f"Re-recording episode {episode_idx}")
                     dataset.clear_episode_buffer()
                     episode_idx -= 1
                 else:
@@ -794,12 +803,14 @@ def control_loop(
 
             transition = create_transition(observation=obs, info=info)
             transition = env_processor(transition)
+            
+            time.sleep(env.reset_time_s)
 
         # Maintain fps timing
         precise_sleep(dt - (time.perf_counter() - step_start_time))
 
     if dataset is not None and cfg.dataset.push_to_hub:
-        logging.info("Pushing dataset to hub")
+        logger.info("Pushing dataset to hub")
         dataset.push_to_hub()
 
 
@@ -929,10 +940,10 @@ def control_loop_for_binary_classifier(
     episode_start_time = time.perf_counter()
     frame_lock = threading.Lock()  # lock for add_frame
     while episode_idx < cfg.dataset.num_episodes_to_record:
-        
+
         while episode_step < frame_num_per_episode:
-            # logger.info(
-            #     f"Episode num: {episode_idx}, episode step: {episode_step}")
+            logger.info(
+                f"Episode num: {episode_idx}, episode step: {episode_step}")
             step_start_time = time.perf_counter()
 
             # Create a neutral action (no movement)
@@ -1031,7 +1042,7 @@ def main(cfg: GymManipulatorConfig) -> None:
     ## RECORD_MODE = 0: record binary classifier data collection mode  ##
     ## RECORD_MODE = 1: record imitation learning data collection mode ##
     #####################################################################
-    RECORD_MODE = 0
+    RECORD_MODE = 1
 
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,

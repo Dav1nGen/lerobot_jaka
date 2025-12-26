@@ -60,12 +60,12 @@
         "control_time_s": 30.0,
         "terminate_on_success": true,
         "fixed_reset_joint_positions": [
-          -80,
-          80,
-          -114,
-          123,
-          91,
-          13
+          -1.405827,
+          1.262885,
+          -2.024232,
+          2.353209,
+          1.521176,
+          0.085486
         ]
       },
       "gripper": {
@@ -111,7 +111,7 @@
   },
   "dataset": {
     "repo_id": null,
-    "root": "/home/joysonrobot/lerobot_dataset/record_data/data1",
+    "root": "/home/joysonrobot/lerobot_dataset/record_data/imitation_data_test",
     "task": "FPC_insert_record",
     "num_episodes_to_record": 3,
     "replay_episode": null,
