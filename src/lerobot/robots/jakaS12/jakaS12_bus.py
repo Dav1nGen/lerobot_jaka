@@ -34,17 +34,8 @@ class JakaS12Bus(RobotBusBase):
 
     def sync_write(self, dict_name: str, joint_position: dict[str, float64]):
         position = tuple(joint_position.values())
-
-        logger.debug(f"reset joint position to {position}")
-        # self._robot.edg_servo_j(tuple(position),
-        #                         move_mode=1,
-        #                         step_num=100,
-        #                         robot_index=0)
         
         self._robot.edg_servo_j(joint_pos=position,
-                  move_mode=1,
-                  step_num=100000,
+                  move_mode=0,
+                  step_num=100,
                   robot_index=0)
-        # result = self._robot.joint_move(position, 0, True, 1)
-        
-        

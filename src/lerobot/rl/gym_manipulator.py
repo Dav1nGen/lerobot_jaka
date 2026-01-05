@@ -109,11 +109,14 @@ def reset_follower_position(robot_arm: Robot,
     """Reset robot arm to target position using smooth trajectory."""
 
     if (robot_arm.name == "jakaS12"):
-        target_joint_dict_keys = [
-            "joint1", "joint2", "joint3", "joint4", "joint5", "joint6"
-        ]
-        target_joint_dict = dict(zip(target_joint_dict_keys,target_position))
-        robot_arm.bus.sync_write("Goal_Position", target_joint_dict)
+        target_position_tuple = tuple(target_position.tolist())
+        logger.info("robot reset!")
+        robot_arm._robot.joint_move(joint_pos=target_position_tuple,
+                             move_mode=0,
+                             is_block=True,
+                             speed=1)
+        
+        robot_arm._robot.servo_move_enable(1)
     else:
         current_position_dict = robot_arm.bus.sync_read("Present_Position")
         current_position = np.array(
@@ -776,7 +779,7 @@ def control_loop(
 
         episode_step += 1
 
-        logger.debug(f"terminated state:{terminated}")
+        # logger.debug(f"terminated state:{terminated}")
         # Handle episode termination
         if terminated or truncated:
             episode_time = time.perf_counter() - episode_start_time
@@ -803,7 +806,7 @@ def control_loop(
 
             transition = create_transition(observation=obs, info=info)
             transition = env_processor(transition)
-            
+
             time.sleep(env.reset_time_s)
 
         # Maintain fps timing
@@ -1042,7 +1045,7 @@ def main(cfg: GymManipulatorConfig) -> None:
     ## RECORD_MODE = 0: record binary classifier data collection mode  ##
     ## RECORD_MODE = 1: record imitation learning data collection mode ##
     #####################################################################
-    RECORD_MODE = 1
+    RECORD_MODE = 0
 
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,
