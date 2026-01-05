@@ -276,7 +276,7 @@ class JakaS12Leader(Teleoperator):
                 np.array(self._cart_space_position) -
                 np.array(self._last_cart_space_position))
 
-            for i in range(3, 6):
+            for i in range(3, 5):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
 
             # logger.debug(f"position diff : {cart_space_position_diff}")
