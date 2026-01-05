@@ -10,16 +10,16 @@
       "image_preprocessing": {
         "crop_params_dict": {
           "observation.images.head": [
-            130,
-            210,
-            50,
-            80
+            211,
+            336,
+            39,
+            64
           ],
           "observation.images.wrist": [
-            162,
-            477,
-            41,
-            79
+            63,
+            329,
+            100,
+            113
           ]
         },
         "resize_size": [
