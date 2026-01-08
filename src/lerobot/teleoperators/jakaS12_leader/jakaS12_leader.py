@@ -100,12 +100,12 @@ class JakaS12Leader(Teleoperator):
         time.sleep(1)
 
         # Set admittance control parameters
-        self._robot.set_admit_ctrl_config(0, 1, 10, 5, 0, 0)
-        self._robot.set_admit_ctrl_config(1, 1, 10, 5, 0, 0)
-        self._robot.set_admit_ctrl_config(2, 1, 10, 5, 0, 0)
-        self._robot.set_admit_ctrl_config(3, 1, 10, 0, 0, 0)
-        self._robot.set_admit_ctrl_config(4, 1, 10, 0, 0, 0)
-        self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0)
+        # self._robot.set_admit_ctrl_config(0, 1, 10, 5, 0, 0)
+        # self._robot.set_admit_ctrl_config(1, 1, 10, 5, 0, 0)
+        # self._robot.set_admit_ctrl_config(2, 1, 10, 5, 0, 0)
+        # self._robot.set_admit_ctrl_config(3, 1, 10, 0, 0, 0)
+        # self._robot.set_admit_ctrl_config(4, 1, 10, 0, 0, 0)
+        # self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0)
 
         # Enable admittance control
         self._robot.enable_admittance_ctrl(1)
@@ -276,7 +276,7 @@ class JakaS12Leader(Teleoperator):
                 np.array(self._cart_space_position) -
                 np.array(self._last_cart_space_position))
 
-            for i in range(3, 6):
+            for i in range(3, 5):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
 
             # logger.debug(f"position diff : {cart_space_position_diff}")

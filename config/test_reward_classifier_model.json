@@ -11,7 +11,7 @@
       "cameras": {
         "head": {
           "type": "opencv",
-          "index_or_path": 4,
+          "index_or_path": 10,
           "width": 640,
           "height": 480,
           "fps": 60,
@@ -19,7 +19,7 @@
         },
         "wrist": {
           "type": "opencv",
-          "index_or_path": 10,
+          "index_or_path": 4,
           "width": 640,
           "height": 480,
           "fps": 60,
@@ -44,17 +44,32 @@
     },
     "processor": {
       "reward_classifier": {
-        "pretrained_path": "/home/joysonrobot/output_dir/reward_classifier_2025_12_24_data2_1000_120step_output/checkpoints/last/pretrained_model",
-        "success_threshold": 0.7,
+        "pretrained_path": "/home/joysonrobot/output_dir/reward_classifier_2026_1_6_data1_1000_120step_output/checkpoints/000100/pretrained_model",
+        "success_threshold": 0.8,
         "success_reward": 1.0
       },
       "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.head": [
+            205,
+            345,
+            49,
+            75
+          ],
+          "observation.images.wrist": [
+            123,
+            301,
+            70,
+            118
+          ]
+        },
         "resize_size": [
           128,
           128
         ]
       },
       "reset": {
+        "control_time_s": 30000.0,
         "terminate_on_success": true
       },
       "gripper": {
@@ -64,7 +79,7 @@
   },
   "dataset": {
     "repo_id": null,
-    "root": "/home/joysonrobot/output_dir/reward_classifier_2025_12_24_data2_1000_120step_output/checkpoints/last/pretrained_model",
+    "root": "/home/joysonrobot/output_dir/reward_classifier_2026_1_6_data1_1000_120step_output/checkpoints/000100/pretrained_model",
     "task": "jaka_collect_reward_classifier_task",
     "num_episodes_to_record": 5,
     "replay_episode": null,
