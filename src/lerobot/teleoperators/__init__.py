@@ -16,3 +16,4 @@
 
 from .config import TeleoperatorConfig
 from .teleoperator import Teleoperator
+from .jakaS12_leader.config_jakaS12_leader import JakaS12LeaderConfig
