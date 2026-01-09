@@ -571,6 +571,10 @@ class RewardClassifierProcessorStep(ProcessorStep):
         if not images:
             return new_transition
 
+        # Ensure images are on the same device as the classifier
+        device = next(self.reward_classifier.parameters()).device
+        images = {key: value.to(device) for key, value in images.items()}
+
         # Run reward classifier
         start_time = time.perf_counter()
         with torch.inference_mode():
