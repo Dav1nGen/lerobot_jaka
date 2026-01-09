@@ -604,6 +604,9 @@ def step_env_and_process_transition(
     processed_action_transition = action_processor(transition)
     processed_action = processed_action_transition[TransitionKey.ACTION]
 
+    if processed_action.ndim == 2 and processed_action.shape[0] == 1:
+        processed_action = processed_action.squeeze(0)
+
     obs, reward, terminated, truncated, info = env.step(processed_action)
 
     reward = reward + processed_action_transition[TransitionKey.REWARD]

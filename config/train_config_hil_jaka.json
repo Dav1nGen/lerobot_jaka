@@ -13,13 +13,16 @@
     "enable": false
   },
   "dataset": {
-    "repo_id": null,
-    "use_imagenet_stats": false
+    "repo_id": "reward_human_2026_1_5_data1_20",
+    "root": "/home/joysonrobot/output_dir/reward_human_2026_1_5_data1_20",
+    "use_imagenet_stats": false,
+    "video_backend": "pyav"
   },
   "policy": {
     "type": "sac",
     "n_obs_steps": 1,
-    "repo_id": null,
+    "repo_id": "FPC_insert",
+    "pretrained_path": null,
     "normalization_mapping": {
       "VISUAL": "MEAN_STD",
       "STATE": "MIN_MAX",
@@ -46,14 +49,14 @@
       "observation.state": {
         "type": "STATE",
         "shape": [
-          15
+          6
         ]
       }
     },
     "device": "cuda",
     "use_amp": false,
     "dataset_stats": {
-      "observation.images.side": {
+      "observation.images.head": {
         "mean": [
           0.485,
           0.456,
@@ -65,7 +68,7 @@
           0.225
         ]
       },
-      "observation.images.front": {
+      "observation.images.wrist": {
         "mean": [
           0.485,
           0.456,
@@ -79,59 +82,35 @@
       },
       "observation.state": {
         "min": [
-          -15.0,
-          -20.0,
-          10.0,
-          65.0,
-          0.0,
-          0.0,
-          -40.0,
-          -60.0,
-          -50.0,
-          -80.0,
-          -10.0,
-          -110.0,
-          -15.0,
-          -20.0,
-          15.0,
-          70.0,
-          -5.0,
-          0.0,
-          0.26,
-          -0.06,
-          0.25
+          -360.0,
+          -360.0,
+          -360.0,
+          -360.0,
+          -360.0,
+          -360.0
         ],
         "max": [
-          15.0,
-          15.0,
-          40.0,
-          110.0,
-          0.5,
-          31.0,
-          53.0,
-          61.0,
-          67.0,
-          90.0,
-          6.0,
-          100.0,
-          15.0,
-          12.0,
-          40.0,
-          110.0,
-          0.5,
-          31.0,
-          0.32,
-          0.06,
-          0.35
+          360.0,
+          360.0,
+          360.0,
+          360.0,
+          360.0,
+          360.0
         ]
       },
       "action": {
         "min": [
           -0.03,
           -0.03,
+          -0.03,
+          -0.03,
+          -0.03,
           -0.03
         ],
         "max": [
+          0.03,
+          0.03,
+          0.03,
           0.03,
           0.03,
           0.03
@@ -145,9 +124,8 @@
     "image_encoder_hidden_dim": 32,
     "shared_encoder": true,
     "online_steps": 1000000,
-    "online_env_seed": 10000,
     "online_buffer_capacity": 30000,
-    "offline_buffer_capacity": 10000,
+    "offline_buffer_capacity": 20000,
     "online_step_before_learning": 100,
     "policy_update_freq": 1,
     "discount": 0.97,
@@ -199,15 +177,7 @@
   "env": {
     "type": "gym_manipulator",
     "name": "real_robot",
-    "mode": null,
-    "repo_id": null,
-    "dataset_root": null,
     "task": "FPC_insert",
-    "num_episodes": 0,
-    "episode": 0,
-    "pretrained_policy_name_or_path": "/home/joysonrobot/lerobot_dataset/record_data/data1",
-    "device": "cuda",
-    "push_to_hub": false,
     "fps": 60,
     "robot": {
       "type": "jakaS12",
@@ -219,7 +189,7 @@
       "cameras": {
         "head": {
           "type": "opencv",
-          "index_or_path": 4,
+          "index_or_path": 10,
           "width": 640,
           "height": 480,
           "fps": 60,
@@ -227,7 +197,7 @@
         },
         "wrist": {
           "type": "opencv",
-          "index_or_path": 10,
+          "index_or_path": 4,
           "width": 640,
           "height": 480,
           "fps": 60,
@@ -251,7 +221,22 @@
       "joint_acc": 3,
       "use_gripper": false
     },
-    
+    "processor": {
+      "image_preprocessing": {
+        "resize_size": [
+          128,
+          128
+        ]
+      },
+      "gripper": {
+        "use_gripper": false
+      },
+      "reward_classifier": {
+        "pretrained_path": "/home/joysonrobot/output_dir/000160/pretrained_model",
+        "success_threshold": 0.91,
+        "success_reward": 1.0
+      }
+    },
     "features": {
       "observation.images.head": {
         "type": "VISUAL",
@@ -272,7 +257,7 @@
       "observation.state": {
         "type": "STATE",
         "shape": [
-          15
+          6
         ]
       },
       "action": {
@@ -283,7 +268,7 @@
       }
     },
     "features_map": {
-      "observation.images.front": "observation.images.head",
+      "observation.images.head": "observation.images.head",
       "observation.images.wrist": "observation.images.wrist",
       "observation.state": "observation.state",
       "action": "action"

@@ -16,4 +16,5 @@
 
 from .config import RobotConfig
 from .robot import Robot
+from .jakaS12.config_jakaS12 import JakaS12Config
 from .utils import make_robot_from_config
