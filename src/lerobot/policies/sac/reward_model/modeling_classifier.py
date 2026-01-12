@@ -281,7 +281,7 @@ class Classifier(PreTrainedPolicy):
             probs = self.predict(images).probabilities
             # logging.debug(f"Predicted reward images: {probs}")
             result = (probs > threshold).float()
-            logger.debug(f"{result}")
+            # logger.debug(f"{result}")
             return (probs > threshold).float()
         else:
             return torch.argmax(self.predict(images).probabilities, dim=1)
