@@ -26,19 +26,11 @@ robot.edg_init_extend(en=True,
                       edg_stat_ip="192.168.1.5",
                       edg_port=10010,
                       edg_mode=0)
-pos_diff1 = (-0.7, 0, 0, 0, 0, 0)
-pos_diff2 = (0.1, 0, 0, 0, 0, 0)
+pos_diff = (0, 0, 0, 0, 0, 0.001)
 while True:
-    robot.edg_servo_p(end_pos=pos_diff1,
+    robot.edg_servo_p(end_pos=pos_diff,
                       move_mode=1,
-                      step_num=2,
+                      step_num=12,
                       robot_index=0)
-    logger.debug(f"sent {pos_diff1}")
-    time.sleep(0.017)
-
-    robot.edg_servo_p(end_pos=pos_diff2,
-                      move_mode=1,
-                      step_num=2,
-                      robot_index=0)
-    logger.debug(f"sent {pos_diff2}")
-    time.sleep(0.017)
+    logger.debug(f"sent {pos_diff}")
+    time.sleep(0.1)

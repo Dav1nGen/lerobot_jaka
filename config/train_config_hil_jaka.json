@@ -160,9 +160,9 @@
     },
     "policy_kwargs": {
       "use_tanh_squash": true,
-      "std_min": -5,
+      "std_min": -3,
       "std_max": 2,
-      "init_final": 0.02
+      "init_final": 0.01
     },
     "actor_learner_config": {
       "learner_host": "127.0.0.1",
