@@ -162,7 +162,7 @@
       "use_tanh_squash": true,
       "std_min": -5,
       "std_max": 2,
-      "init_final": 0.05
+      "init_final": 0.02
     },
     "actor_learner_config": {
       "learner_host": "127.0.0.1",
