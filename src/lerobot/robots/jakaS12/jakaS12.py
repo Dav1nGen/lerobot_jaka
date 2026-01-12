@@ -248,11 +248,14 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        pos_diff = list(self._cartesian_space_position_diff.values())
-        pos_diff[3] = 0
-        pos_diff[4] = 0
-        pos_diff[5] = 0
-        pos_diff = tuple(pos_diff)
+        # pos_diff = list(self._cartesian_space_position_diff.values())
+        # pos_diff[3] = 0
+        # pos_diff[4] = 0
+        # pos_diff[5] = 0
+        # pos_diff = tuple(pos_diff)
+
+        # TODO(Dav1nGen): Unnormalized action feature Min-Max
+        # xn = 2 * (x - min) / (max - min) - 1
 
         logger.debug(f"sent action pos diff:{pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
