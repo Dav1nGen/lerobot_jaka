@@ -23,6 +23,34 @@
     "n_obs_steps": 1,
     "repo_id": "FPC_insert",
     "pretrained_path": null,
+    "num_discrete_actions": 3,
+    "storage_device": "cuda",
+    "vision_encoder_name": "helper2424/resnet10",
+    "freeze_vision_encoder": true,
+    "image_encoder_hidden_dim": 32,
+    "shared_encoder": true,
+    "online_steps": 1000000,
+    "online_buffer_capacity": 30000,
+    "offline_buffer_capacity": 20000,
+    "online_step_before_learning": 100,
+    "policy_update_freq": 1,
+    "discount": 0.97,
+    "async_prefetch": false,
+    "temperature_init": 0.01,
+    "num_critics": 2,
+    "num_subsample_critics": null,
+    "critic_lr": 0.0003,
+    "actor_lr": 0.0003,
+    "temperature_lr": 0.0003,
+    "critic_target_update_weight": 0.005,
+    "utd_ratio": 2,
+    "state_encoder_hidden_dim": 256,
+    "latent_dim": 256,
+    "target_entropy": null,
+    "use_backup_entropy": true,
+    "grad_clip_norm": 40.0,
+    "device": "cuda",
+    "use_amp": false,
     "normalization_mapping": {
       "VISUAL": "MEAN_STD",
       "STATE": "MIN_MAX",
@@ -53,8 +81,6 @@
         ]
       }
     },
-    "device": "cuda",
-    "use_amp": false,
     "dataset_stats": {
       "observation.images.head": {
         "mean": [
@@ -82,67 +108,41 @@
       },
       "observation.state": {
         "min": [
-          -360.0,
-          -360.0,
-          -360.0,
-          -360.0,
-          -360.0,
-          -360.0
+          -2.0,
+          1.0,
+          -2.5,
+          2.0,
+          1.0,
+          0.0
         ],
         "max": [
-          360.0,
-          360.0,
-          360.0,
-          360.0,
-          360.0,
-          360.0
+          -1.0,
+          1.5,
+          -1.5,
+          2.5,
+          2.0,
+          0.2
         ]
       },
       "action": {
         "min": [
-          -0.03,
-          -0.03,
-          -0.03,
-          -0.03,
-          -0.03,
-          -0.03
+          -0.01,
+          -0.01,
+          -0.01,
+          -0.005,
+          -0.005,
+          -0.005
         ],
         "max": [
-          0.03,
-          0.03,
-          0.03,
-          0.03,
-          0.03,
-          0.03
+          0.01,
+          0.01,
+          0.01,
+          0.005,
+          0.005,
+          0.005
         ]
       }
     },
-    "num_discrete_actions": 3,
-    "storage_device": "cuda",
-    "vision_encoder_name": "helper2424/resnet10",
-    "freeze_vision_encoder": true,
-    "image_encoder_hidden_dim": 32,
-    "shared_encoder": true,
-    "online_steps": 1000000,
-    "online_buffer_capacity": 30000,
-    "offline_buffer_capacity": 20000,
-    "online_step_before_learning": 100,
-    "policy_update_freq": 1,
-    "discount": 0.97,
-    "async_prefetch": false,
-    "temperature_init": 0.01,
-    "num_critics": 2,
-    "num_subsample_critics": null,
-    "critic_lr": 0.0003,
-    "actor_lr": 0.0003,
-    "temperature_lr": 0.0003,
-    "critic_target_update_weight": 0.005,
-    "utd_ratio": 2,
-    "state_encoder_hidden_dim": 256,
-    "latent_dim": 256,
-    "target_entropy": null,
-    "use_backup_entropy": true,
-    "grad_clip_norm": 40.0,
     "critic_network_kwargs": {
       "hidden_dims": [
         256,
