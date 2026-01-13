@@ -249,12 +249,6 @@ class JakaS12(Robot):
         normalized_pos_diff = tuple(
             self._cartesian_space_position_diff.values())
 
-        # pos_diff = list(self._cartesian_space_position_diff.values())
-        # pos_diff[3] = 0
-        # pos_diff[4] = 0
-        # pos_diff[5] = 0
-        # pos_diff = tuple(pos_diff)
-
         min_value: tuple = (-0.01, -0.01, -0.01, -0.005, -0.005, -0.005)
         max_value: tuple = (0.01, 0.01, 0.01, 0.005, 0.005, 0.005)
 
@@ -286,24 +280,6 @@ class JakaS12(Robot):
             result.append(val)
 
         return tuple(result)
-
-    # Processes an action from the keyboard teleoperator and applies it to the robot.
-    # This handles components controlled by the keyboard, like the sucker.
-    # (This function will be deprecated in the future.)
-    def _from_keyboard_to_base_action(
-            self, keyboard_action: dict[str, Any]) -> dict[str, Any]:
-
-        base_action = {}
-        if "sucker_state" in keyboard_action:
-            desired_sucker_state = keyboard_action["sucker_state"]
-            # Only send a command if the state needs to change
-            if desired_sucker_state != self._sucker_state:
-                self._sucker.write(self._coils_address, desired_sucker_state)
-                self._sucker_state = desired_sucker_state
-                logger.info(f"Sucker state set to: {self._sucker_state}")
-            # The action to be logged is the state itself.
-            base_action["sucker_state"] = self._sucker_state
-        return base_action
 
     def is_calibrated(self) -> bool:
         pass
