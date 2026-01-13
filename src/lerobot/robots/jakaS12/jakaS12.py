@@ -246,7 +246,8 @@ class JakaS12(Robot):
         self._cartesian_space_position_diff: dict[str,
                                                   float] = cart_pos_diff_dict
 
-        pos_diff = tuple(self._cartesian_space_position_diff.values())
+        normalized_pos_diff = tuple(
+            self._cartesian_space_position_diff.values())
 
         # pos_diff = list(self._cartesian_space_position_diff.values())
         # pos_diff[3] = 0
@@ -254,9 +255,14 @@ class JakaS12(Robot):
         # pos_diff[5] = 0
         # pos_diff = tuple(pos_diff)
 
-        # TODO(Dav1nGen): Unnormalized action feature Min-Max
-        # xn = 2 * (x - min) / (max - min) - 1
+        min_value: tuple = (-0.01, -0.01, -0.01, -0.005, -0.005, -0.005)
+        max_value: tuple = (0.01, 0.01, 0.01, 0.005, 0.005, 0.005)
 
+        pos_diff = self.unnormalied_action_feature(
+            normalized_pos_diff=normalized_pos_diff,
+            min=min_value,
+            max=max_value)
+        
         logger.debug(f"sent action pos diff:{pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
@@ -265,8 +271,25 @@ class JakaS12(Robot):
 
         return self._cartesian_space_position_diff
 
+    # Unnormalization function: converts model outputs in the range [-1,1] back to their actual physical values.
+    # x = ((xn + 1) / 2) * (max - min) + min
+    def unnormalied_action_feature(self, normalized_pos_diff: tuple,
+                                   min: tuple, max: tuple) -> tuple:
+        if not (len(normalized_pos_diff) == len(min) == len(max)):
+            raise RuntimeError(
+                f"Length mismatch: pos_diff({len(normalized_pos_diff)}), min({len(min)}), max({len(max)})"
+            )
+
+        result = []
+        for x_n, x_min, x_max in zip(normalized_pos_diff, min, max):
+            val = ((x_n + 1) / 2) * (x_max - x_min) + x_min
+            result.append(val)
+
+        return tuple(result)
+
     # Processes an action from the keyboard teleoperator and applies it to the robot.
     # This handles components controlled by the keyboard, like the sucker.
+    # (This function will be deprecated in the future.)
     def _from_keyboard_to_base_action(
             self, keyboard_action: dict[str, Any]) -> dict[str, Any]:
 
