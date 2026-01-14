@@ -34,6 +34,11 @@ class JakaS12(Robot):
         self._robot = jkrc.RC(self._arm_ip)
         self.bus = None
 
+        self._pos_diff_min_value: tuple = (-0.01, -0.01, -0.01, -0.005, -0.005,
+                                           -0.005)
+        self._pos_diff_max_value: tuple = (0.01, 0.01, 0.01, 0.005, 0.005,
+                                           0.005)
+
         # Sucker
         self._sucker_ip: str = self._config.sucker_ip
         self._sucker_port: int = self._config.sucker_port
@@ -249,14 +254,11 @@ class JakaS12(Robot):
         normalized_pos_diff = tuple(
             self._cartesian_space_position_diff.values())
 
-        min_value: tuple = (-0.01, -0.01, -0.01, -0.005, -0.005, -0.005)
-        max_value: tuple = (0.01, 0.01, 0.01, 0.005, 0.005, 0.005)
-
         pos_diff = self.unnormalied_action_feature(
             normalized_pos_diff=normalized_pos_diff,
-            min=min_value,
-            max=max_value)
-        
+            min=self._pos_diff_min_value,
+            max=self._pos_diff_max_value)
+
         logger.debug(f"sent action pos diff:{pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,

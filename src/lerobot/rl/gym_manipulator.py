@@ -996,7 +996,7 @@ def control_loop_for_binary_classifier(
                     frame["complementary_info.discrete_penalty"] = np.array(
                         [discrete_penalty], dtype=np.float32)
 
-                # Only record the frame when key is pressed
+                # Record one frame when key is pressed
                 if dataset is not None:
                     if terminated or truncated:
                         with frame_lock:
