@@ -259,7 +259,7 @@ class JakaS12(Robot):
             min=self._pos_diff_min_value,
             max=self._pos_diff_max_value)
 
-        logger.debug(f"sent action pos diff:{pos_diff}")
+        # logger.debug(f"sent action pos diff:{pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
                                 step_num=2,

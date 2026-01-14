@@ -198,23 +198,6 @@ class JakaS12Leader(Teleoperator):
 
         return action_dict
 
-    @property
-    def feedback_features(self) -> dict[str, type]:
-        pass
-
-    def send_feedback(self, feedback: dict[str, Any]) -> None:
-        pass
-
-    @property
-    def is_calibrated(self) -> bool:
-        pass
-
-    def calibrate(self) -> None:
-        pass
-
-    def configure(self) -> None:
-        pass
-
     # Get keyboard events
     def get_teleop_events(self) -> dict[str, bool]:
         terminate_episode = False
@@ -243,6 +226,23 @@ class JakaS12Leader(Teleoperator):
             TeleopEvents.SUCCESS: success,
             TeleopEvents.RERECORD_EPISODE: rerecord_episode,
         }
+
+    @property
+    def feedback_features(self) -> dict[str, type]:
+        pass
+
+    def send_feedback(self, feedback: dict[str, Any]) -> None:
+        pass
+
+    @property
+    def is_calibrated(self) -> bool:
+        pass
+
+    def calibrate(self) -> None:
+        pass
+
+    def configure(self) -> None:
+        pass
 
     #############################
     ########Custom method########
@@ -279,7 +279,7 @@ class JakaS12Leader(Teleoperator):
             for i in range(3, 5):
                 cart_space_position_diff[i] = -cart_space_position_diff[i]
 
-            # logger.debug(f"position diff : {cart_space_position_diff}")
+            # logger.debug(f"teleoperator position diff : {cart_space_position_diff}")
             with self._lock:
                 self._cart_space_position_diff = tuple(
                     cart_space_position_diff)
