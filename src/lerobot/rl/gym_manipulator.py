@@ -285,6 +285,8 @@ class RobotEnv(gym.Env):
         self, action
     ) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         """Execute one environment step with given action."""
+        
+        # Processed the actions for the JAKA S12.
         if isinstance(self.robot, jakaS12.JakaS12):
             action_dict = {
                 "cart_pos_diff_dict": {
@@ -297,11 +299,9 @@ class RobotEnv(gym.Env):
                 }
             }
             if self.use_gripper:
-                # Assuming gripper action is the last element.
-                # The value for sucker_action might need adjustment based on what the driver expects.
-                # Assuming 1 for open, 0 for close, and action[6] is in [0, 2] from action space.
                 action_dict["sucker_action"] = 1 if action[6] > 1.0 else 0
             self.robot.send_action(action_dict)
+            
         else:
             joint_targets_dict = {
                 f"{key}.pos": action[i]
@@ -617,6 +617,13 @@ def step_env_and_process_transition(
         TransitionKey.COMPLEMENTARY_DATA].copy()
     new_info = processed_action_transition[TransitionKey.INFO].copy()
     new_info.update(info)
+
+    # Dav1nGen FIX: Ensure TeleopEvents from processor are not overwritten by env default return values
+    # The action_processor (e.g. InterventionActionProcessorStep) calculates the true intervention state,
+    # while env.step() often returns a default False.
+    for key in [TeleopEvents.IS_INTERVENTION, TeleopEvents.SUCCESS, TeleopEvents.TERMINATE_EPISODE, TeleopEvents.RERECORD_EPISODE]:
+        if key in processed_action_transition[TransitionKey.INFO]:
+            new_info[key] = processed_action_transition[TransitionKey.INFO][key]
 
     new_transition = create_transition(
         observation=obs,
