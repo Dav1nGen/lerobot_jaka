@@ -223,6 +223,20 @@
     },
     "processor": {
       "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.head": [
+            205,
+            345,
+            49,
+            75
+          ],
+          "observation.images.wrist": [
+            123,
+            301,
+            70,
+            118
+          ]
+        },
         "resize_size": [
           128,
           128
