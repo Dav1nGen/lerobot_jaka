@@ -112,10 +112,10 @@ def reset_follower_position(robot_arm: Robot,
         target_position_tuple = tuple(target_position.tolist())
         logger.info("robot reset!")
         robot_arm._robot.joint_move(joint_pos=target_position_tuple,
-                             move_mode=0,
-                             is_block=True,
-                             speed=1)
-        
+                                    move_mode=0,
+                                    is_block=True,
+                                    speed=1)
+
         robot_arm._robot.servo_move_enable(1)
     else:
         current_position_dict = robot_arm.bus.sync_read("Present_Position")
@@ -285,7 +285,7 @@ class RobotEnv(gym.Env):
         self, action
     ) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         """Execute one environment step with given action."""
-        
+
         # Processed the actions for the JAKA S12.
         if isinstance(self.robot, jakaS12.JakaS12):
             action_dict = {
@@ -301,7 +301,7 @@ class RobotEnv(gym.Env):
             if self.use_gripper:
                 action_dict["sucker_action"] = 1 if action[6] > 1.0 else 0
             self.robot.send_action(action_dict)
-            
+
         else:
             joint_targets_dict = {
                 f"{key}.pos": action[i]
@@ -621,9 +621,13 @@ def step_env_and_process_transition(
     # Dav1nGen FIX: Ensure TeleopEvents from processor are not overwritten by env default return values
     # The action_processor (e.g. InterventionActionProcessorStep) calculates the true intervention state,
     # while env.step() often returns a default False.
-    for key in [TeleopEvents.IS_INTERVENTION, TeleopEvents.SUCCESS, TeleopEvents.TERMINATE_EPISODE, TeleopEvents.RERECORD_EPISODE]:
+    for key in [
+            TeleopEvents.IS_INTERVENTION, TeleopEvents.SUCCESS,
+            TeleopEvents.TERMINATE_EPISODE, TeleopEvents.RERECORD_EPISODE
+    ]:
         if key in processed_action_transition[TransitionKey.INFO]:
-            new_info[key] = processed_action_transition[TransitionKey.INFO][key]
+            new_info[key] = processed_action_transition[
+                TransitionKey.INFO][key]
 
     new_transition = create_transition(
         observation=obs,
