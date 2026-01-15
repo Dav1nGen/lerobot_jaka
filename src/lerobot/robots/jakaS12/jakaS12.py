@@ -256,22 +256,6 @@ class JakaS12(Robot):
 
         return self._cartesian_space_position_diff
 
-    # Unnormalization function: converts model outputs in the range [-1,1] back to their actual physical values.
-    # x = ((xn + 1) / 2) * (max - min) + min
-    def unnormalied_action_feature(self, normalized_pos_diff: tuple,
-                                   min: tuple, max: tuple) -> tuple:
-        if not (len(normalized_pos_diff) == len(min) == len(max)):
-            raise RuntimeError(
-                f"Length mismatch: pos_diff({len(normalized_pos_diff)}), min({len(min)}), max({len(max)})"
-            )
-
-        result = []
-        for x_n, x_min, x_max in zip(normalized_pos_diff, min, max):
-            val = ((x_n + 1) / 2) * (x_max - x_min) + x_min
-            result.append(val)
-
-        return tuple(result)
-
     def is_calibrated(self) -> bool:
         pass
 
