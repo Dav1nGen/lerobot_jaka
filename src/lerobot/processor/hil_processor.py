@@ -432,9 +432,6 @@ class InterventionActionProcessorStep(ProcessorStep):
         complementary_data = transition.get(TransitionKey.COMPLEMENTARY_DATA, {})
         teleop_action = complementary_data.get(TELEOP_ACTION_KEY)
         
-        # Original is_intervention from a separate call, which causes a race condition.
-        # is_intervention = info.get(TeleopEvents.IS_INTERVENTION, False)
-        
         # Dav1nGen FIX: Re-calculate is_intervention based on the teleop_action we already have.
         # This ensures the action and the intervention flag are consistent.
         is_intervention = False
