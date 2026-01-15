@@ -62,7 +62,7 @@ from lerobot.configs import parser
 from lerobot.configs.train import TrainRLServerPipelineConfig
 from lerobot.policies.factory import make_policy
 from lerobot.policies.sac.modeling_sac import SACPolicy
-from lerobot.processor import TransitionKey
+from lerobot.processor import TransitionKey, UnnormalizerProcessorStep
 from lerobot.rl.process import ProcessSignalHandler
 from lerobot.rl.queue import get_last_item_from_queue
 from lerobot.robots import so100_follower  # noqa: F401
@@ -239,6 +239,19 @@ def act_with_policy(
 
     online_env, teleop_device = make_robot_env(cfg=cfg.env)
     env_processor, action_processor = make_processors(online_env, teleop_device, cfg.env, cfg.policy.device)
+
+    # Initialize unnormalizer to convert policy actions (normalized) back to physical units
+    unnormalizer = UnnormalizerProcessorStep(
+        features=cfg.policy.output_features,
+        norm_map=cfg.policy.normalization_mapping,
+        stats=cfg.policy.dataset_stats,
+        device=cfg.policy.device,
+    )
+
+    # Add unnormalizer to the beginning of the action processor pipeline
+    # This ensures that the policy action is unnormalized before being used
+    # by subsequent steps (like intervention handling) or sent to the robot
+    action_processor.steps.insert(0, unnormalizer)
 
     set_seed(cfg.seed)
     device = get_safe_torch_device(cfg.policy.device, log=True)
