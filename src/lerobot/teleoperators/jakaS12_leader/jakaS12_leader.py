@@ -99,14 +99,6 @@ class JakaS12Leader(Teleoperator):
         self._robot.zero_end_sensor()
         time.sleep(1)
 
-        # Set admittance control parameters
-        # self._robot.set_admit_ctrl_config(0, 1, 10, 5, 0, 0)
-        # self._robot.set_admit_ctrl_config(1, 1, 10, 5, 0, 0)
-        # self._robot.set_admit_ctrl_config(2, 1, 10, 5, 0, 0)
-        # self._robot.set_admit_ctrl_config(3, 1, 10, 0, 0, 0)
-        # self._robot.set_admit_ctrl_config(4, 1, 10, 0, 0, 0)
-        # self._robot.set_admit_ctrl_config(5, 1, 10, 0, 0, 0)
-
         # Enable admittance control
         self._robot.enable_admittance_ctrl(1)
         logger.info(f"Enable_admittance_ctrl open!")

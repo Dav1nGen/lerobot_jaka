@@ -251,7 +251,7 @@ class JakaS12(Robot):
         # logger.debug(f"sent action pos diff:{pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
-                                step_num=2,
+                                step_num=1,
                                 robot_index=0)
 
         return self._cartesian_space_position_diff

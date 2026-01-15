@@ -28,9 +28,6 @@ robot.edg_init_extend(en=True,
                       edg_mode=0)
 pos_diff = (0, 0, 0, 0, 0, 0.001)
 while True:
-    robot.edg_servo_p(end_pos=pos_diff,
-                      move_mode=1,
-                      step_num=12,
-                      robot_index=0)
+    robot.edg_servo_p(end_pos=pos_diff, move_mode=1, step_num=1, robot_index=0)
     logger.debug(f"sent {pos_diff}")
-    time.sleep(0.1)
+    time.sleep(0.017)
