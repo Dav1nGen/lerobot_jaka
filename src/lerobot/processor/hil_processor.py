@@ -118,7 +118,8 @@ class AddTeleopActionAsComplimentaryDataStep(ComplementaryDataProcessorStep):
             `teleop_action` key.
         """
         new_complementary_data = dict(complementary_data)
-        new_complementary_data[TELEOP_ACTION_KEY] = self.teleop_device.get_action()
+        new_complementary_data[
+            TELEOP_ACTION_KEY] = self.teleop_device.get_action()
         return new_complementary_data
 
     def transform_features(
@@ -252,7 +253,8 @@ class ImageCropResizeProcessorStep(ObservationProcessorStep):
             return features
         for key in features[PipelineFeatureType.OBSERVATION]:
             if "image" in key:
-                nb_channel = features[PipelineFeatureType.OBSERVATION][key].shape[0]
+                nb_channel = features[
+                    PipelineFeatureType.OBSERVATION][key].shape[0]
                 features[PipelineFeatureType.OBSERVATION][key] = PolicyFeature(
                     type=features[PipelineFeatureType.OBSERVATION][key].type,
                     shape=(nb_channel, *self.resize_size),
@@ -357,9 +359,10 @@ class GripperPenaltyProcessorStep(ComplementaryDataProcessorStep):
         gripper_state_normalized = current_gripper_pos / self.max_gripper_pos
 
         # Calculate penalty boolean as in original
-        gripper_penalty_bool = (gripper_state_normalized < 0.5 and gripper_action_normalized > 0.5) or (
-            gripper_state_normalized > 0.75 and gripper_action_normalized < 0.5
-        )
+        gripper_penalty_bool = (gripper_state_normalized < 0.5
+                                and gripper_action_normalized
+                                > 0.5) or (gripper_state_normalized > 0.75
+                                           and gripper_action_normalized < 0.5)
 
         gripper_penalty = self.penalty * int(gripper_penalty_bool)
 
@@ -425,19 +428,29 @@ class InterventionActionProcessorStep(ProcessorStep):
         # In gym_manipulator, the action is a raw tensor, not a PolicyAction
         # Let's be more flexible with the type check
         if not isinstance(action, torch.Tensor):
-            raise ValueError(f"Action should be a torch.Tensor type got {type(action)}")
+            raise ValueError(
+                f"Action should be a torch.Tensor type got {type(action)}")
 
         # Get intervention signals from complementary data
         info = transition.get(TransitionKey.INFO, {})
-        complementary_data = transition.get(TransitionKey.COMPLEMENTARY_DATA, {})
+        complementary_data = transition.get(TransitionKey.COMPLEMENTARY_DATA,
+                                            {})
         teleop_action = complementary_data.get(TELEOP_ACTION_KEY)
-        
+
         # Dav1nGen FIX: Re-calculate is_intervention based on the teleop_action we already have.
         # This ensures the action and the intervention flag are consistent.
         is_intervention = False
-        if teleop_action and isinstance(teleop_action, dict) and 'cart_pos_diff_dict' in teleop_action:
+        if teleop_action and isinstance(
+                teleop_action, dict) and 'cart_pos_diff_dict' in teleop_action:
             pos_diff_dict = teleop_action['cart_pos_diff_dict']
-            pos_diff = np.array([pos_diff_dict.get('x',0), pos_diff_dict.get('y',0), pos_diff_dict.get('z',0)])
+            pos_diff = np.array([
+                pos_diff_dict.get('x', 0),
+                pos_diff_dict.get('y', 0),
+                pos_diff_dict.get('z', 0),
+                pos_diff_dict.get('rx', 0),
+                pos_diff_dict.get('ry', 0),
+                pos_diff_dict.get('rz', 0)
+            ])
             is_intervention = np.linalg.norm(pos_diff) > 1e-5
 
         terminate_episode = info.get(TeleopEvents.TERMINATE_EPISODE, False)
@@ -451,10 +464,11 @@ class InterventionActionProcessorStep(ProcessorStep):
             if isinstance(teleop_action, dict):
                 # Dav1nGen FIX: Correctly parse the nested dict from jakaS12_leader
                 if 'cart_pos_diff_dict' in teleop_action:
-                    action_list = list(teleop_action['cart_pos_diff_dict'].values())
+                    action_list = list(
+                        teleop_action['cart_pos_diff_dict'].values())
                     if self.use_gripper:
                         action_list.append(teleop_action.get(GRIPPER_KEY, 1.0))
-                else: # Original logic for other teleop devices
+                else:  # Original logic for other teleop devices
                     action_list = [
                         teleop_action.get("delta_x", 0.0),
                         teleop_action.get("delta_y", 0.0),
@@ -470,13 +484,14 @@ class InterventionActionProcessorStep(ProcessorStep):
                 action_list = teleop_action
 
             if action_list is not None:
-                teleop_action_tensor = torch.tensor(action_list, dtype=action.dtype, device=action.device)
+                teleop_action_tensor = torch.tensor(action_list,
+                                                    dtype=action.dtype,
+                                                    device=action.device)
                 new_transition[TransitionKey.ACTION] = teleop_action_tensor
 
         # Handle episode termination
         new_transition[TransitionKey.DONE] = bool(terminate_episode) or (
-            self.terminate_on_success and success
-        )
+            self.terminate_on_success and success)
         new_transition[TransitionKey.REWARD] = float(success)
 
         # Update info with intervention metadata
@@ -487,8 +502,10 @@ class InterventionActionProcessorStep(ProcessorStep):
         new_transition[TransitionKey.INFO] = info
 
         # Update complementary data with teleop action
-        complementary_data = new_transition.get(TransitionKey.COMPLEMENTARY_DATA, {})
-        complementary_data[TELEOP_ACTION_KEY] = new_transition.get(TransitionKey.ACTION)
+        complementary_data = new_transition.get(
+            TransitionKey.COMPLEMENTARY_DATA, {})
+        complementary_data[TELEOP_ACTION_KEY] = new_transition.get(
+            TransitionKey.ACTION)
         new_transition[TransitionKey.COMPLEMENTARY_DATA] = complementary_data
 
         return new_transition
@@ -542,7 +559,8 @@ class RewardClassifierProcessorStep(ProcessorStep):
         if self.pretrained_path is not None:
             from lerobot.policies.sac.reward_model.modeling_classifier import Classifier
 
-            self.reward_classifier = Classifier.from_pretrained(self.pretrained_path)
+            self.reward_classifier = Classifier.from_pretrained(
+                self.pretrained_path)
             self.reward_classifier.to(self.device)
             self.reward_classifier.eval()
 
@@ -563,7 +581,10 @@ class RewardClassifierProcessorStep(ProcessorStep):
             return new_transition
 
         # Extract images from observation
-        images = {key: value for key, value in observation.items() if "image" in key}
+        images = {
+            key: value
+            for key, value in observation.items() if "image" in key
+        }
 
         if not images:
             return new_transition
@@ -575,7 +596,8 @@ class RewardClassifierProcessorStep(ProcessorStep):
         # Run reward classifier
         start_time = time.perf_counter()
         with torch.inference_mode():
-            success = self.reward_classifier.predict_reward(images, threshold=self.success_threshold)
+            success = self.reward_classifier.predict_reward(
+                images, threshold=self.success_threshold)
 
         classifier_frequency = 1 / (time.perf_counter() - start_time)
 
