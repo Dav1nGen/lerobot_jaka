@@ -350,7 +350,7 @@ def act_with_policy(
             episode_intervention = True
             episode_intervention_steps += 1
 
-        # logger.debug(f"{episode_total_steps}")
+        logger.debug(f"{episode_intervention_steps}")
 
         complementary_info = {
             "discrete_penalty":
@@ -426,6 +426,10 @@ def act_with_policy(
             # Process initial observation
             transition = create_transition(observation=obs, info=info)
             transition = env_processor(transition)
+            
+            logger.info(f"Next episode will start after 10s")
+            time.sleep(10)
+            
 
         if cfg.env.fps is not None:
             dt_time = time.perf_counter() - start_time

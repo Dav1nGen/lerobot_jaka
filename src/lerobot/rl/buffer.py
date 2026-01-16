@@ -18,6 +18,7 @@ import functools
 from collections.abc import Callable, Sequence
 from contextlib import suppress
 from typing import TypedDict
+from loguru import logger
 
 import torch
 import torch.nn.functional as F  # noqa: N812

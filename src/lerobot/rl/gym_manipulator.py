@@ -259,6 +259,11 @@ class RobotEnv(gym.Env):
         Returns:
             Tuple of (observation, info) dictionaries.
         """
+        
+        # Reconnection mechanism : prevent the robotic arm from becoming uncontrollable after exiting protective mode.
+        self.robot.reconnect()
+        time.sleep(1)
+        
         # Reset the robot
         # self.robot.reset()
         start_time = time.perf_counter()
@@ -268,6 +273,8 @@ class RobotEnv(gym.Env):
             log_say("Reset the environment done.", play_sounds=True)
 
         precise_sleep(self.reset_time_s - (time.perf_counter() - start_time))
+        
+        
 
         super().reset(seed=seed, options=options)
 

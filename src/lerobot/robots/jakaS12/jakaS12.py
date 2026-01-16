@@ -108,6 +108,36 @@ class JakaS12(Robot):
         self._is_connected = False
         logger.info(f"Disconnected from robot at {self._arm_ip}")
 
+    def reconnect(self) -> None:
+        # Connect to arm
+        try:
+            self._robot.login()
+        except Exception as e:
+            logger.error(f"Failed to login to robot at {self._arm_ip}: {e}")
+            sys.exit(1)
+
+        try:
+            self._robot.power_on()
+        except Exception as e:
+            logger.error(f"Failed to power on robot at {self._arm_ip}: {e}")
+            sys.exit(1)
+
+        # Enable robot
+        try:
+            self._robot.enable_robot()
+        except Exception as e:
+            logger.error(f"Failed to enable robot at {self._arm_ip}: {e}")
+            sys.exit(1)
+
+        # Init EDG extend
+        self._robot.edg_init_extend(en=True,
+                                    edg_stat_ip=self._arm_ip,
+                                    edg_port=10010,
+                                    edg_mode=0)
+
+        # Enable servo mode
+        self._robot.servo_move_enable(1)
+
     @property
     def is_connected(self) -> bool:
         return self._is_connected

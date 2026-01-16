@@ -4,7 +4,7 @@
   "resume": false,
   "seed": 1000,
   "num_workers": 4,
-  "batch_size": 256,
+  "batch_size": 64,
   "steps": 100000,
   "log_freq": 500,
   "save_checkpoint": true,
@@ -29,9 +29,9 @@
     "freeze_vision_encoder": true,
     "image_encoder_hidden_dim": 32,
     "shared_encoder": true,
-    "online_steps": 100000,
-    "online_buffer_capacity": 30000,
-    "offline_buffer_capacity": 20000,
+    "online_steps": 100000000,
+    "online_buffer_capacity": 12000,
+    "offline_buffer_capacity": 12000,
     "online_step_before_learning": 100,
     "policy_update_freq": 1,
     "discount": 0.97,
@@ -50,7 +50,7 @@
     "use_backup_entropy": true,
     "grad_clip_norm": 40.0,
     "device": "cuda",
-    "use_amp": false,
+    "use_amp": true,
     "normalization_mapping": {
       "VISUAL": "MEAN_STD",
       "STATE": "MIN_MAX",
@@ -249,6 +249,17 @@
         "pretrained_path": "/home/joysonrobot/output_dir/000160/pretrained_model",
         "success_threshold": 0.91,
         "success_reward": 1.0
+      },
+      "reset": {
+        "control_time_s": 30000.0,
+        "fixed_reset_joint_positions": [
+          -1.405827,
+          1.262885,
+          -2.024232,
+          2.353209,
+          1.521176,
+          0.085486
+        ]
       }
     },
     "features": {
