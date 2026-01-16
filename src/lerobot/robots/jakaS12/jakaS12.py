@@ -72,11 +72,6 @@ class JakaS12(Robot):
                                     edg_port=10010,
                                     edg_mode=0)
 
-        # Set servo move filter
-        # self._robot.servo_move_enable(0)
-        # self._robot.servo_speed_foresight(200, 0.4)
-        # self._robot.servo_move_use_joint_LPF(0.5)
-
         # Enable servo mode
         self._robot.servo_move_enable(1)
 
