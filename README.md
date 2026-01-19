@@ -73,7 +73,7 @@ In the terminal where the script is running, you can press **'S'** to indicate a
 
 ![Collect data for binary classifier](https://github.com/user-attachments/assets/1c6d25c2-4987-4b3b-8818-30f742deffe9)
 
-### Steo 2: Train a binary classifier model with collected data
+### Step 2: Train a binary classifier model with collected data
 To train a binary classifier model, run the following command:
 
 ```bash
