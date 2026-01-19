@@ -595,6 +595,7 @@ pyopengl==3.1.10
     # via
     #   dm-control
     #   mujoco
+PyQt5==5.15.11
 pyparsing==3.2.5
     # via
     #   dm-control
