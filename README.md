@@ -69,6 +69,9 @@ To collect a dataset, run the following command:
 ```bash
 python -m lerobot.rl.gym_manipulator --config_path ./cofig/collect_reward_classifier_task.json
 ```
+In the terminal where the script is running, you can press **'S'** to indicate a positive sample and **'F'** to indicate a negative sample.
+
+![Collect data for binary classifier](./media/data_collect.mp4)
 
 ### Steo 2: Train a binary classifier model with collected data
 To train a binary classifier model, run the following command:
@@ -83,6 +86,8 @@ After running lerobot-train script, you can test the trained model with the foll
 python -m lerobot.rl.gym_manipulator --config_path ./config/test_reward_classifier_model.json
 ```
 
+![Test binary classifier model](https://github.com/user-attachments/assets/4b90e06f-d538-4a19-ac1f-3df9ec51023a)
+
 
 ### Step 3: Collect human demonstration data
 
@@ -93,6 +98,8 @@ To collect human demonstration data, run the following command:
 ```bash
 python -m lerobot.rl.gym_manipulator --config_path ./config/record_env_config_jaka.json
 ```
+
+Similarly, in the terminal where the script is running, you can press **'S'** to indicate a successful human demonstration and **'F'** to indicate a failed human demonstration.
 
 ### Step 4: Train a policy with the binary classifier model and human demonstration data
 
@@ -121,3 +128,6 @@ python -m lerobot.rl.gym_manipulator --config_path ./config/record_env_config_ja
     - Execute rollouts of the policy to collect experience
     - Sends transitions to the learner
     - Receives updated policy parameters
+
+<!-- ![SAC runing](./media/SAC.mp4) -->
+<img src="./media/SAC.mp4" width="600" alt="功能演示">
