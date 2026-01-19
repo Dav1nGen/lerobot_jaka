@@ -71,7 +71,7 @@ python -m lerobot.rl.gym_manipulator --config_path ./cofig/collect_reward_classi
 ```
 In the terminal where the script is running, you can press **'S'** to indicate a positive sample and **'F'** to indicate a negative sample.
 
-![Collect data for binary classifier](./media/data_collect.mp4)
+![Collect data for binary classifier](https://github.com/user-attachments/assets/1c6d25c2-4987-4b3b-8818-30f742deffe9)
 
 ### Steo 2: Train a binary classifier model with collected data
 To train a binary classifier model, run the following command:
@@ -129,5 +129,6 @@ Similarly, in the terminal where the script is running, you can press **'S'** to
     - Sends transitions to the learner
     - Receives updated policy parameters
 
-<!-- ![SAC runing](./media/SAC.mp4) -->
-<img src="./media/SAC.mp4" width="600" alt="功能演示">
+![SAC runing](https://github.com/user-attachments/assets/3a4bf1ef-1c8f-4761-998a-d84d114a6ca0)
+
+As shown in the video, when there is no human intervention, the robotic arm’s actions are the divergent outputs from the initial policy. When human intervention occurs, the action data is replaced by the actions from the teleoperator.
