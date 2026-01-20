@@ -160,8 +160,8 @@
     },
     "policy_kwargs": {
       "use_tanh_squash": true,
-      "std_min": -3,
-      "std_max": 2,
+      "std_min": -10,
+      "std_max": -2,
       "init_final": 0.01
     },
     "actor_learner_config": {
