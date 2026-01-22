@@ -10,7 +10,7 @@
   "save_checkpoint": true,
   "save_freq": 2000,
   "wandb": {
-    "enable": false
+    "enable": true
   },
   "dataset": {
     "repo_id": "reward_human_2026_1_5_data1_20",
@@ -129,17 +129,17 @@
           -0.01,
           -0.01,
           -0.01,
-          -0.005,
-          -0.005,
-          -0.005
+          -0.0005,
+          -0.0005,
+          -0.0005
         ],
         "max": [
           0.01,
           0.01,
           0.01,
-          0.005,
-          0.005,
-          0.005
+          0.0005,
+          0.0005,
+          0.0005
         ]
       }
     },
@@ -160,8 +160,8 @@
     },
     "policy_kwargs": {
       "use_tanh_squash": true,
-      "std_min": -10,
-      "std_max": -2,
+      "std_min": 1e-5,
+      "std_max": 1e-1,
       "init_final": 0.01
     },
     "actor_learner_config": {
@@ -225,10 +225,10 @@
       "image_preprocessing": {
         "crop_params_dict": {
           "observation.images.head": [
-            205,
-            345,
-            49,
-            75
+            134,
+            289,
+            176,
+            170
           ],
           "observation.images.wrist": [
             123,
@@ -253,12 +253,12 @@
       "reset": {
         "control_time_s": 30000.0,
         "fixed_reset_joint_positions": [
-          -1.405827,
-          1.262885,
-          -2.024232,
-          2.353209,
-          1.521176,
-          0.085486
+          -1.4274698886211221,
+          1.2807749649909987,
+          -2.0674472187424033,
+          2.379599355461589,
+          1.5216478550587362,
+          0.06382669074543262
         ]
       }
     },

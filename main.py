@@ -26,8 +26,11 @@ modbus.write(8,0)
 #                       edg_stat_ip="192.168.1.5",
 #                       edg_port=10010,
 #                       edg_mode=0)
-# pos_diff = (0, 0, 0, 0, 0, 0.001)
-# while True:
-#     robot.edg_servo_p(end_pos=pos_diff, move_mode=1, step_num=1, robot_index=0)
-#     logger.debug(f"sent {pos_diff}")
-#     time.sleep(0.017)
+# target_position_tuple = [
+#     -1.427469, 1.290287, -2.063432, 2.366073, 1.521647, 0.063826
+# ]
+
+# robot.joint_move(joint_pos=target_position_tuple,
+#                  move_mode=0,
+#                  is_block=True,
+#                  speed=1)

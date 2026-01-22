@@ -10,10 +10,10 @@
       "image_preprocessing": {
         "crop_params_dict": {
           "observation.images.head": [
-            205,
-            345,
-            49,
-            75
+            134,
+            289,
+            176,
+            170
           ],
           "observation.images.wrist": [
             123,
@@ -32,12 +32,12 @@
         "control_time_s": 30000.0,
         "terminate_on_success": true,
         "fixed_reset_joint_positions": [
-          -1.405827,
-          1.262885,
-          -2.024232,
-          2.353209,
-          1.521176,
-          0.085486
+          -1.4274698886211221,
+          1.2807749649909987,
+          -2.0674472187424033,
+          2.379599355461589,
+          1.5216478550587362,
+          0.06382669074543262
         ]
       },
       "gripper": {

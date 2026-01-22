@@ -51,10 +51,10 @@
       "image_preprocessing": {
         "crop_params_dict": {
           "observation.images.head": [
-            205,
-            345,
-            49,
-            75
+            134,
+            289,
+            176,
+            170
           ],
           "observation.images.wrist": [
             123,

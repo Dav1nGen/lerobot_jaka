@@ -427,8 +427,8 @@ def act_with_policy(
             transition = create_transition(observation=obs, info=info)
             transition = env_processor(transition)
             
-            logger.info(f"Next episode will start after 10s")
-            time.sleep(10)
+            logger.info(f"Next episode will start after 2s")
+            time.sleep(2)
             
 
         if cfg.env.fps is not None:
