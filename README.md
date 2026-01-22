@@ -67,7 +67,7 @@ Before run collect data scripts,modify `RECORD_MODE = 0` in `./src/lerobot/rl/gy
 
 To collect a dataset, run the following command:
 ```bash
-python -m lerobot.rl.gym_manipulator --config_path ./cofig/collect_reward_classifier_task.json
+python -m lerobot.rl.gym_manipulator --config_path ./config/collect_reward_classifier_task.json
 ```
 In the terminal where the script is running, you can press **'S'** to indicate a positive sample and **'F'** to indicate a negative sample.
 
