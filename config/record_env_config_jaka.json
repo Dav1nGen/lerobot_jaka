@@ -103,7 +103,7 @@
       }
     },
     "features_map": {
-      "observation.images.front": "observation.images.side",
+      "observation.images.head": "observation.images.head",
       "observation.images.wrist": "observation.images.wrist",
       "observation.state": "observation.state",
       "action": "action"
@@ -113,7 +113,7 @@
     "repo_id": null,
     "root": "/home/joysonrobot/lerobot_dataset/record_data/imitation_data_test",
     "task": "FPC_insert_record",
-    "num_episodes_to_record": 3,
+    "num_episodes_to_record": 20,
     "replay_episode": null,
     "push_to_hub": false
   }
