@@ -1066,7 +1066,7 @@ def main(cfg: GymManipulatorConfig) -> None:
     ## RECORD_MODE = 0: record binary classifier data collection mode  ##
     ## RECORD_MODE = 1: record imitation learning data collection mode ##
     #####################################################################
-    RECORD_MODE = 0
+    RECORD_MODE = 1
 
     env, teleop_device = make_robot_env(cfg.env)
     env_processor, action_processor = make_processors(env, teleop_device,

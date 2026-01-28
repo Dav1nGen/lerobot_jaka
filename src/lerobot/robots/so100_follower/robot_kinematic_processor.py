@@ -218,7 +218,9 @@ class EEBoundsAndSafety(RobotActionProcessorStep):
         twist = np.array([wx, wy, wz], dtype=float)
 
         # Clip position
-        pos = np.clip(pos, self.end_effector_bounds["min"], self.end_effector_bounds["max"])
+        min_bounds = np.array(self.end_effector_bounds["min"])[:3]
+        max_bounds = np.array(self.end_effector_bounds["max"])[:3]
+        pos = np.clip(pos, min_bounds, max_bounds)
 
         # Check for jumps in position
         if self._last_pos is not None:
@@ -409,7 +411,7 @@ def compute_forward_kinematics_joints_to_ee(
     t = kinematics.forward_kinematics(q)
     pos = t[:3, 3]
     tw = Rotation.from_matrix(t[:3, :3]).as_rotvec()
-    gripper_pos = joints["gripper.pos"]
+    gripper_pos = joints.get("gripper.pos", 0.0)
     for n in motor_names:
         joints.pop(f"{n}.pos")
     joints["ee.x"] = float(pos[0])

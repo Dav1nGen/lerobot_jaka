@@ -260,6 +260,33 @@
           1.5216478550587362,
           0.06382669074543262
         ]
+      },
+      "inverse_kinematics": {
+        "urdf_path": "/home/joysonrobot/lerobot/urdf/JakaS12/jaka_s12.urdf",
+        "target_frame_name": "Link_06",
+        "end_effector_bounds": {
+          "min": [
+            -60,
+            30,
+            -150,
+            2.179599355461587,
+            1.3216478550587361,
+            -0.26382669074543261
+          ],
+          "max": [
+            -40,
+            90,
+            -60,
+            2.679599355461589,
+            1.8216478550587362,
+            0.26382669074543262
+          ]
+        },
+        "end_effector_step_sizes": {
+          "x": 0.001,
+          "y": 0.001,
+          "z": 0.001
+        }
       }
     },
     "features": {

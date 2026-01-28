@@ -97,7 +97,7 @@ class MapDeltaActionToRobotActionStep(RobotActionProcessorStep):
         delta_x = action.pop("delta_x")
         delta_y = action.pop("delta_y")
         delta_z = action.pop("delta_z")
-        gripper = action.pop("gripper")
+        gripper = action.pop("gripper", 0.0)
 
         # Determine if the teleoperator is actively providing input
         # Consider enabled if any significant movement delta is detected
