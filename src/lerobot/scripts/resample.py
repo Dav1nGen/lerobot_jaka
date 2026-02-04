@@ -92,6 +92,6 @@ def resample_dataset_frames(repo_id: str,
 
 if __name__ == "__main__":
     resample_dataset_frames(
-        repo_id="/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/imitation_data/imitation_data_2026_01_22_data1",
-        new_repo_id="/home/dav1ngen/my_documents/JoysonRobot/T002_project/lerobot_dataset/imitation_data/imitation_data_2026_01_22_data1_resample",
-        target_fps=30)
+        repo_id="/home/joysonrobot/lerobot_dataset/imitation_data_2026_01_26_data1",
+        new_repo_id="/home/joysonrobot/lerobot_dataset/imitation_data_2026_01_26_data1_resample_10FPS",
+        target_fps=10)

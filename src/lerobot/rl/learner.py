@@ -51,6 +51,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pformat
+from loguru import logger 
 
 import grpc
 import torch

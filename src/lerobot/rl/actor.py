@@ -359,17 +359,33 @@ def act_with_policy(
                     "discrete_penalty", 0.0)
             ]),
         }
+        
         # Create transition for learner (convert to old format)
-        list_transition_to_send_to_learner.append(
-            Transition(
-                state=observation,
-                action=executed_action,
-                reward=reward,
-                next_state=next_observation,
-                done=done,
-                truncated=truncated,
-                complementary_info=complementary_info,
-            ))
+        # Dav1nGen modify: Only append transition every other step.
+        
+        # list_transition_to_send_to_learner.append(
+        #         Transition(
+        #             state=observation,
+        #             action=executed_action,
+        #             reward=reward,
+        #             next_state=next_observation,
+        #             done=done,
+        #             truncated=truncated,
+        #             complementary_info=complementary_info,
+        #         )
+        #     )
+        if interaction_step % 6 == 0:
+            list_transition_to_send_to_learner.append(
+                Transition(
+                    state=observation,
+                    action=executed_action,
+                    reward=reward,
+                    next_state=next_observation,
+                    done=done,
+                    truncated=truncated,
+                    complementary_info=complementary_info,
+                )
+            )
 
         # Update transition for next iteration
         transition = new_transition
@@ -379,6 +395,9 @@ def act_with_policy(
                 f"[ACTOR] Global step {interaction_step}: Episode reward: {sum_reward_episode}"
             )
 
+            list_len=len(list_transition_to_send_to_learner)
+            logger.debug(f"lenth of list_transition_to_send_to_learner: {list_len}")
+            
             update_policy_parameters(policy=policy,
                                      parameters_queue=parameters_queue,
                                      device=device)

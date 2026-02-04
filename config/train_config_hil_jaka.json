@@ -14,7 +14,7 @@
   },
   "dataset": {
     "repo_id": "reward_human_2026_1_5_data1_20",
-    "root": "/home/joysonrobot/lerobot_dataset/imitation_data_2026_01_26_data1",
+    "root": "/home/joysonrobot/lerobot_dataset/imitation_data_2026_01_26_data1_resample_10FPS",
     "use_imagenet_stats": false,
     "video_backend": "pyav"
   },
@@ -48,7 +48,7 @@
     "latent_dim": 256,
     "target_entropy": null,
     "use_backup_entropy": true,
-    "grad_clip_norm": 1,
+    "grad_clip_norm": 40.0,
     "device": "cuda",
     "use_amp": true,
     "normalization_mapping": {
@@ -84,26 +84,26 @@
     "dataset_stats": {
       "observation.images.head": {
         "mean": [
-          0.485,
-          0.456,
-          0.406
+          0.31071837050494033,
+          0.3365990069221048,
+          0.34887135201248476
         ],
         "std": [
-          0.229,
-          0.224,
-          0.225
+          0.0033874944969759786,
+          0.002860180763724046,
+          0.0025980957393277083
         ]
       },
       "observation.images.wrist": {
         "mean": [
-          0.485,
-          0.456,
-          0.406
+          0.4172555295458028,
+          0.41156630344764855,
+          0.4145853500067018
         ],
         "std": [
-          0.229,
-          0.224,
-          0.225
+          0.002457325417945392,
+          0.001993336300545637,
+          0.0030093126345912178
         ]
       },
       "observation.state": {
