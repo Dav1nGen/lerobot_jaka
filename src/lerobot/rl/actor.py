@@ -360,16 +360,19 @@ def act_with_policy(
             ]),
         }
         # Create transition for learner (convert to old format)
-        list_transition_to_send_to_learner.append(
-            Transition(
-                state=observation,
-                action=executed_action,
-                reward=reward,
-                next_state=next_observation,
-                done=done,
-                truncated=truncated,
-                complementary_info=complementary_info,
-            ))
+        # Dav1nGen modify: Only append transition every other step.
+        if interaction_step % 2 == 0:
+            list_transition_to_send_to_learner.append(
+                Transition(
+                    state=observation,
+                    action=executed_action,
+                    reward=reward,
+                    next_state=next_observation,
+                    done=done,
+                    truncated=truncated,
+                    complementary_info=complementary_info,
+                )
+            )
 
         # Update transition for next iteration
         transition = new_transition
