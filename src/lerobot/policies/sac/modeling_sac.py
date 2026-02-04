@@ -26,6 +26,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F  # noqa: N812
 from torch import Tensor
+from loguru import logger
 from torch.distributions import MultivariateNormal, TanhTransform, Transform, TransformedDistribution
 
 from lerobot.policies.pretrained import PreTrainedPolicy
@@ -385,6 +386,8 @@ class SACPolicy(
         )
         min_q_preds = q_preds.min(dim=0)[0]
 
+        # logger.debug(type(min_q_preds))
+        logger.debug(f"min_q_preds: {min_q_preds}")
         actor_loss = ((self.temperature * log_probs) - min_q_preds).mean()
         return actor_loss
 
