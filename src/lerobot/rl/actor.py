@@ -374,7 +374,7 @@ def act_with_policy(
         #             complementary_info=complementary_info,
         #         )
         #     )
-        if interaction_step % 2 == 0:
+        if interaction_step % 6 == 0:
             list_transition_to_send_to_learner.append(
                 Transition(
                     state=observation,
