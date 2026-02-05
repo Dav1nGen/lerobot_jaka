@@ -4,13 +4,13 @@
   "resume": false,
   "seed": 1000,
   "num_workers": 4,
-  "batch_size": 256,
+  "batch_size": 64,
   "steps": 100000,
   "log_freq": 500,
   "save_checkpoint": true,
   "save_freq": 2000,
   "wandb": {
-    "enable": false
+    "enable": true
   },
   "dataset": {
     "repo_id": "reward_human_2026_1_5_data1_20",
@@ -30,8 +30,8 @@
     "image_encoder_hidden_dim": 32,
     "shared_encoder": true,
     "online_steps": 100000000,
-    "online_buffer_capacity": 14000,
-    "offline_buffer_capacity": 14000,
+    "online_buffer_capacity": 2000,
+    "offline_buffer_capacity": 2000,
     "online_step_before_learning": 100,
     "policy_update_freq": 1,
     "discount": 0.99,
@@ -46,7 +46,7 @@
     "utd_ratio": 1,
     "state_encoder_hidden_dim": 256,
     "latent_dim": 256,
-    "target_entropy": null,
+    "target_entropy": -7,
     "use_backup_entropy": true,
     "grad_clip_norm": 40.0,
     "device": "cuda",
@@ -126,20 +126,20 @@
       },
       "action": {
         "min": [
-          -0.1,
-          -0.1,
-          -0.1,
-          -0.0005,
-          -0.0005,
-          -0.0005
+          -0.5,
+          -0.5,
+          -0.5,
+          -0.000005,
+          -0.000005,
+          -0.000005
         ],
         "max": [
-          0.1,
-          0.1,
-          0.1,
-          0.0005,
-          0.0005,
-          0.0005
+          0.5,
+          0.5,
+          0.5,
+          0.000005,
+          0.000005,
+          0.000005
         ]
       }
     },
@@ -160,8 +160,8 @@
     },
     "policy_kwargs": {
       "use_tanh_squash": true,
-      "std_min": 1e-4,
-      "std_max": 1e-2,
+      "std_min": 1e-3,
+      "std_max": 1e-1,
       "init_final": 0.01
     },
     "actor_learner_config": {
