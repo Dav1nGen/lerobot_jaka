@@ -32,6 +32,9 @@ class JakaS12(Robot):
         self._EE_torque: tuple = (0, 0, 0, 0, 0, 0)
         self._cartesian_space_position_diff: dict[str, float] = {}
         self._robot = jkrc.RC(self._arm_ip)
+        # self._action_scale: list = [
+        #     0.5, 0.5, 0.5, 0.05, 0.05, 0.05
+        # ]
         self.bus = None
 
         # Sucker
@@ -273,7 +276,10 @@ class JakaS12(Robot):
 
         pos_diff = tuple(self._cartesian_space_position_diff.values())
 
-        # logger.debug(f"sent action pos diff:{pos_diff}")
+        # scaled_pos_diff: tuple = tuple(
+        #     a * b for a, b in zip(pos_diff, self._action_scale))
+
+        # logger.debug(f"sent action pos diff:{scaled_pos_diff}")
         self._robot.edg_servo_p(end_pos=pos_diff,
                                 move_mode=1,
                                 step_num=1,
